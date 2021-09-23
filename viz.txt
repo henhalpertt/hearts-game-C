@@ -1,0 +1,19 @@
+/* bold/not bold */
+#define BOLD_ON &quot;\x1b[1m&quot;
+#define BOLD_OFF &quot;\x1b[21m&quot;
+/* colors */
+#define NORMAL &quot;\x1B[0m&quot;
+#define BLACK &quot;\x1b[30m&quot;
+#define RED &quot;\x1B[31m&quot;
+#define GREEN &quot;\x1B[32m&quot;
+#define YELLOW &quot;\x1B[33m&quot;
+#define BLUE &quot;\x1B[34m&quot;
+#define MAGENTA &quot;\x1B[35m&quot;
+#define CYAN &quot;\x1B[36m&quot;
+#define WHITE &quot;\x1B[37m&quot;
+#define GRAY &quot;\x1b[90m&quot;
+/* cards suites symbols */
+#define HEART &quot;\xE2\x99\xA5&quot;
+#define SPADE &quot;\xE2\x99\xA0&quot;
+#define DIAMOND &quot;\xE2\x99\xA6&quot;
+#define CLUB &quot;\xE2\x99\xA3&quot;
