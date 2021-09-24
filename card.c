@@ -6,7 +6,8 @@
 #include <stdio.h>
 /* malloc for a new cards */
 #include <stdlib.h>
-typedef struct Card Card;
+#define CARD_MAGIC_NUM 19931302
+
 struct Card
 {
 	Rank m_suit;

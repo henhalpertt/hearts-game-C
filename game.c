@@ -2,60 +2,42 @@
 #include <stdio.h>
 /* malloc for a new cards */
 #include <stdlib.h>
-/* catching errors */
-#include "Errors.h"
 /* status signals */
-#include "Signal.h"
-struct Input
-{
-	size_t m_nCards;
-	size_t m_nBots;
-	size_t m_nHumans;
-}
 
 struct Game
 {
-	Deck *m_deck;
-/*	Player *m_players;*/
-	GameStatus m_status;
-	int m_nBots;
-	int m_nHumans
-}
+	int m_gameStatus; /* 0 - still running, 1 - game over */
+	int *m_scores; /* follow-up on scores */
+	int m_whosTheWinner; /* '1' if someone won. otherwise '0' to all players */
+};
 
-void SetGame(struct Input _in)
+struct Game * CreateGame(int _nPlayers)
 {
-	struct Deck *deck;
 	struct Game *newGame;
-/*	struct Round *round;*/
-/*	struct Players *players;*/
-	
-/*	struct Players *_player;*/
-	
-	deck = GetDeck(_in->m_nCards);
+	int *scores;
+	int player;
+	/* new game */
 	newGame = (struct Game*)malloc(sizeof(struct Game));
 	if(newGame == NULL)
 	{
-		return NULL;
+		return;
+	}
+	scores = (int*)malloc(sizeof(int) * _nPlayers);
+	if(scores == NULL)
+	{
+		return;
 	}
 	/* init game */
-	newGame->m_deck = deck;
-	newGame->m_status = CheckStatus(NEW_GAME);
-	newGame->m_bots = _in->m_nBots;
-	newGame->m_nHumans = _in->m_nHumans;
+	newGame->m_scores = scores;
+	for(player=0; player < _nPlayers; player++ )
+	{
+		newGame->m_scores[player] = 0; /*initial score of each player */
+	}
+	return newGame;
+	/* POLICY Functions */
+	 
 	
-	/* POLICY - Round Functions */
-	PrerequisitesForRound(newGame); /* splitting cards to players,
-												 sorting by suit+rank,
-												 				passing 3 cards among players */
-	
-	
-										 					
 }
-
-
-
-
-
 
 
 

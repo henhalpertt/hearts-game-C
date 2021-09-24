@@ -3,8 +3,6 @@
 #include "Errors.h"
 #include "CardSpecs.h"
 
-typedef struct Card Card;
-
 struct Card
 {
 	Rank m_suit;

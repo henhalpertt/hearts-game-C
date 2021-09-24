@@ -1,32 +1,18 @@
-#ifndef __CARDS_H__
-#define __CARDS_H__
-#include "Errors.h"
+#ifndef __GAME_H__
+#define __GAME_H__
 typedef struct Game Game;
-typedef   int(*GameStatus)(struct Game*);
-
-struct Input
-{
-	size_t m_decks;
-	size_t m_Noobs;
-	size_t nBots;
-}
 
 struct Game
 {
-	Deck *m_deck;
-	int m_nPlayers;
-	GameStatus m_status;
-}
+	int m_gameStatus; /* 0 - still running, 1 - game over */
+	int *m_scores; /* follow-up on scores */
+	int m_whosTheWinner; /* '1' if someone won. otherwise '0' to all players */
+};
 
+struct Game * CreateGame(int _nPlayers);
 
-SetGame(struct Input);
+/* RunGame(); */
 
-/*RunGame();*/
+/* EndGame(); */
 
-/*EndGame();*/
-
-# endif /* __CARDS_H__ */
-
-
-
-
+# endif /* __GAME_H__ */

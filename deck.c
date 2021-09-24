@@ -7,6 +7,7 @@
 /*#include "Errors.h"*/
 /*#include "CardSpecs.h"*/
 #include "card.h"
+#define DECK_MAGIC_NUM 19931201
 
 struct Deck
 {
@@ -51,11 +52,11 @@ static void ShuffleTheDeck(struct Deck *_deck, int _nCards)
 }
 
 /* _nCards - # of cards  */
-struct Deck * CreateDeck(int _nCards)
+struct Deck * CreateDeck(size_t _nCards)
 {
 	struct Deck *newDeck;
 	struct Card **newCards;
-	int sizeOfCards;
+	size_t sizeOfCards;
 	size_t suit, rank, cardCnt;
 	newDeck = (struct Deck*)malloc(sizeof(struct Deck));
 	if(newDeck == NULL)
@@ -70,7 +71,7 @@ struct Deck * CreateDeck(int _nCards)
 		return NULL;
 	}
 	
-	newDeck->m_cards = newCards;
+	newDeck->m_cards = newCards; 
 	newDeck->m_nCards = 0;
 	newDeck->m_magic = DECK_MAGIC_NUM;
 	
@@ -80,26 +81,6 @@ struct Deck * CreateDeck(int _nCards)
 	return newDeck;
 }	
 
-int main(void)
-{
-	struct Deck *newDeck;
-	size_t suit, rank, cardCnt;
-	newDeck = CreateDeck(52);
-	cardCnt=0;
-	for(suit=HEARTS; suit<=CLUBS; suit++)
-	{
-		for(rank=TWO; rank<=ACE; rank++)
-		{
-			printf("s:%d,r:%d ",
-						 newDeck->m_cards[cardCnt]->m_suit, 
-								newDeck->m_cards[cardCnt]->m_rank);
-			cardCnt++;
-		}
-		printf("\n");
-	}
-	return 0;
-	
-}
 
 
 

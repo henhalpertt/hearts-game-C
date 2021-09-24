@@ -1,5 +1,3 @@
-#define CARD_MAGIC_NUM 19931302
-#define DECK_MAGIC_NUM 19931201
 #define NUM_CARDS 52
 
 typedef enum Suit

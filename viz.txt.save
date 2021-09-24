@@ -2,9 +2,9 @@
 #define BOLD_ON &quot;\x1b[1m&quot;
 #define BOLD_OFF &quot;\x1b[21m&quot;
 /* colors */
-#define NORMAL &quot;\x1B[0m&quot;
-#define BLACK &quot;\x1b[30m&quot;
-#define RED &quot;\x1B[31m&quot;
+#define NORMAL ";\x1B[0m&quot;
+#define BLACK ";\x1b[30m&quot;
+#define RED ";\x1B[31m&quot;
 #define GREEN &quot;\x1B[32m&quot;
 #define YELLOW &quot;\x1B[33m&quot;
 #define BLUE &quot;\x1B[34m&quot;

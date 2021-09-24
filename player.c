@@ -13,7 +13,7 @@ enum PlayerSpecs
 	IN_THE_GAME = 1,
 	OUT_OF_GAME = 0,
 	REAL_PLAYER = 1,
-	BOT_PLAYER  = 0,
+	BOT_PLAYER  = 0
 } PlayerSpecs;
 /* intrinsic properties of player only ! generic struct */
 struct Player
@@ -25,7 +25,6 @@ struct Player
 	int m_winner; /* all of them are losers at first, flg will change 
 					once game is over only to one of the players */
 	int m_magic;
-	
 };
 
 /* players as a whole --> Team */
@@ -36,8 +35,7 @@ struct Team
 	int m_magic;
 };
 
-
-struct Player * CreatePlayers(int _id, int _realOrNot)
+static struct Player * CreatePlayers(int _id, int _realOrNot)
 {
 	struct Player *newplayer;
 
@@ -54,7 +52,7 @@ struct Player * CreatePlayers(int _id, int _realOrNot)
 	return newplayer;
 }
 
-void MakeHumanPlayers(struct Team *_newTeam, int _nHumans)
+static void MakeHumanPlayers(struct Team *_newTeam, int _nHumans)
 {
 	int person;
 	if(_nHumans == 0)
@@ -68,7 +66,7 @@ void MakeHumanPlayers(struct Team *_newTeam, int _nHumans)
 	}
 }
 
-void MakeBotPlayers(struct Team *_newTeam, int _nBots)
+static void MakeBotPlayers(struct Team *_newTeam, int _nBots)
 {
 	int bot, from;
 	if(_nBots == 0)
@@ -105,7 +103,6 @@ struct Team * MakePlayers(int _nBots, int _nHumans)
 	{
 		return NULL;
 	}
-	
 	newTeam->m_players = newPlayers;
 	newTeam->m_totalPlayers = NEW_GAME;
 	newTeam->m_magic = TEAM_MAGIC_NUM;
@@ -119,23 +116,6 @@ struct Team * MakePlayers(int _nBots, int _nHumans)
 	return newTeam;
 }
 
-int main(void)
-{
-	struct Team *newTeam;
-	int player;
-	
-	newTeam = MakePlayers(1, 3); /* 3 bots 1 human */
-	for(player=0; player<4; player++)
-	{
-		printf("\nplayer id: %d, real? %d, inOrOut: %d, winner? %d \n",
-					newTeam->m_players[player]->m_id,
-					newTeam->m_players[player]->m_realOrNot,
-					newTeam->m_players[player]->m_inOrOutOfTheGame,
-					newTeam->m_players[player]->m_winner);
-	}
-	return 0;
-	
-}
 
 /* END */
 
