@@ -6,9 +6,9 @@
 
 struct Game
 {
-	int m_gameStatus; /* 0 - still running, 1 - game over */
-	int *m_scores; /* follow-up on scores */
-	int m_whosTheWinner; /* '1' if someone won. otherwise '0' to all players */
+	int m_gameStatus; 
+	int *m_scores; 
+	int m_whosTheWinner;
 };
 
 struct Game * CreateGame(int _nPlayers)

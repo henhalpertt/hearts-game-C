@@ -11,7 +11,7 @@ struct Input
 int main(void)
 {
 	struct Input in[PARAMS] = {52, 4, 0}; /* 52 cards, 4 bots, 0 humans */
-	 SetUpGame(in); /* create game, cards, players, define rules */ 
+	SetUpGame(in); /* create game, cards, players, define rules */ 
 	 return 0;
 }
 /*	RunGame();*/

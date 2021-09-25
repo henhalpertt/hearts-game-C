@@ -3,6 +3,7 @@
 #include "Errors.h"
 #include "CardSpecs.h"
 
+/* public struct for deck.c file */
 struct Card
 {
 	Rank m_suit;

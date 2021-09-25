@@ -3,22 +3,16 @@
 /* malloc for a new cards */
 #include <stdlib.h>
 /* extract card struct + its functions + error signals + card specs */
-/*#include "card.h"*/
-/*#include "Errors.h"*/
-/*#include "CardSpecs.h"*/
-#include "card.h"
-#define DECK_MAGIC_NUM 19931201
+#include "deck.h"
 
-struct Deck
-{
-	struct Card **m_cards;
-	size_t m_nCards;
-	int m_magic;
-};
+#define DECK_MAGIC_NUM 19931201
 
 static void FillTheDeck(struct Deck *_deck, int _nCards)
 {
-	size_t suit, rank, cardCnt;
+	int cardCnt;
+	Rank rank;
+	Suit suit;
+	
 	cardCnt = 0;
 	for(suit=HEARTS; suit<=CLUBS; suit++)
 	{
@@ -51,13 +45,12 @@ static void ShuffleTheDeck(struct Deck *_deck, int _nCards)
     }
 }
 
-/* _nCards - # of cards  */
 struct Deck * CreateDeck(size_t _nCards)
 {
 	struct Deck *newDeck;
 	struct Card **newCards;
-	size_t sizeOfCards;
-	size_t suit, rank, cardCnt;
+	int sizeOfCards;
+	
 	newDeck = (struct Deck*)malloc(sizeof(struct Deck));
 	if(newDeck == NULL)
 	{
@@ -70,7 +63,6 @@ struct Deck * CreateDeck(size_t _nCards)
 	{
 		return NULL;
 	}
-	
 	newDeck->m_cards = newCards; 
 	newDeck->m_nCards = 0;
 	newDeck->m_magic = DECK_MAGIC_NUM;
@@ -80,6 +72,13 @@ struct Deck * CreateDeck(size_t _nCards)
 
 	return newDeck;
 }	
+
+
+
+
+
+\
+
 
 
 

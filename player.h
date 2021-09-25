@@ -1,6 +1,6 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
-
+#define VALID_NUM_PLAYERS 4
 enum PlayerSpecs
 {
 	PLAYER_MAGIC_NUM = 19931245,

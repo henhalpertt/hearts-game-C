@@ -15,6 +15,8 @@ enum PlayerSpecs
 	REAL_PLAYER = 1,
 	BOT_PLAYER  = 0
 } PlayerSpecs;
+
+
 /* intrinsic properties of player only ! generic struct */
 struct Player
 {
@@ -26,6 +28,7 @@ struct Player
 					once game is over only to one of the players */
 	int m_magic;
 };
+
 
 /* players as a whole --> Team */
 struct Team

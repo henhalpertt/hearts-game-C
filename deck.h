@@ -1,12 +1,8 @@
 #ifndef __CARDS_H__
 #define __CARDS_H__
-#include <stdlib.h>
 #include "Errors.h"
 #include "CardSpecs.h"
 #include "card.h"
-
-typedef struct Deck Deck;
-typedef struct Card Card;
 
 struct Deck
 {
@@ -23,5 +19,6 @@ struct Card
 };
 
 struct Deck * CreateDeck(size_t _nCards);
+struct Card  * CreateCard(Suit cardSuit, Rank cardRank);
 
 # endif /* __CARDS_H__ */

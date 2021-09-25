@@ -1,19 +1,13 @@
 /* catching errors */
-#include "Errors.h"
+/*#include "Errors.h"*/
 /* possible suit and rank of card */
-#include "CardSpecs.h"
+/*#include "CardSpecs.h"*/
 /* possible NULL pointers */
 #include <stdio.h>
 /* malloc for a new cards */
 #include <stdlib.h>
 #define CARD_MAGIC_NUM 19931302
-
-struct Card
-{
-	Rank m_suit;
-	Suit m_rank;
-	int m_magic;
-};
+#include "card.h"
 
 struct Card * CreateCard(Suit cardSuit, Rank cardRank)
 {
