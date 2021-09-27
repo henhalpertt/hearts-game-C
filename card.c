@@ -1,13 +1,15 @@
-/* catching errors */
-/*#include "Errors.h"*/
-/* possible suit and rank of card */
-/*#include "CardSpecs.h"*/
-/* possible NULL pointers */
 #include <stdio.h>
 /* malloc for a new cards */
 #include <stdlib.h>
 #define CARD_MAGIC_NUM 19931302
 #include "card.h"
+
+struct Card
+{
+	Rank m_suit;
+	Suit m_rank;
+	int m_magic;
+};
 
 struct Card * CreateCard(Suit cardSuit, Rank cardRank)
 {
@@ -33,4 +35,26 @@ void DestroyCard(struct Card *_card)
 	free(_card);
 }
 
+void SwapCards(struct Card *_card1, struct Card *_card2)
+{
+	struct Card tmp;
+	tmp = *_card1;
+	*_card1 = *_card2;
+	*_card2 = tmp;
+}
+
+int GetRank(struct Card *_card)
+{
+	return _card->m_rank;
+}
+
+int GetSuit(struct Card *_card)
+{
+	return _card->m_suit;
+}
+
+void PrintCard(struct Card *_card)
+{
+	printf("rank:%d suit:%d", _card->m_rank, _card->m_suit);
+}
 

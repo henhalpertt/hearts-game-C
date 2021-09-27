@@ -1,10 +1,8 @@
 #ifndef __ROUND_H__
 #define __ROUND_H__
 
+void SetUpGame(int _nBots, int _nHumans);
 
-typedef struct Input Input;
-
-
-void SetUpGame(struct Input *_in);
+struct Deck * GetDeckForHearts(int _nCards);
 
 # endif /* __GAME_H__ */

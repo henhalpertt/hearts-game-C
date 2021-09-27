@@ -3,14 +3,6 @@
 #include "Errors.h"
 #include "CardSpecs.h"
 
-/* public struct for deck.c file */
-struct Card
-{
-	Rank m_suit;
-	Suit m_rank;
-	int m_magic;
-};
-
 /*
 	desc: create a new card with suit and rank.
 	args: 
@@ -23,6 +15,11 @@ struct Card
 */
 struct Card  * CreateCard(Suit cardSuit, Rank cardRank);
 
+int GetRank(struct Card *_card);
+int GetSuit(struct Card *_card);
+void SwapCards(struct Card *_card1, struct Card *_card2);
 void DestroyCard(struct Card *_card);
+
+void PrintCard(struct Card *_card);
 
 # endif /* __CARDS_H__ */

@@ -20,7 +20,7 @@ typedef enum Rank
 	NINE,
 	TEN,
 	JACK,
-	Queen,
+	QUEEN,
 	KING,
 	ACE
 } Rank;
