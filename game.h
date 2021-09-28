@@ -13,9 +13,18 @@ void FindPlayerGame(struct Game *_game, int _rank, int _suit, int *playerID);
 
 void FindIdxGame(struct Game *_game, int _rank, int _suit, int *idx, int _player);
 
+void FindBestCardGame(struct Game *_game, int _playerID, int _leadSuit, int _leadRank, int *idx);
+
+int UpdateScores(struct Game *_game, int *_updatedScores, int(*GameStatus)(int *));
+
+void RefillDeck(struct Game *_game);
+
 struct Game * CreateGame(int _nBots, int _nHumans);
 struct Deck * GetDeckForHearts(int _nCards);
 int GetAmntOfCardsHearts();
+
+void DestroyGame(struct Game *_game);
+
 /* RunGame(); */
 
 /* EndGame(); */

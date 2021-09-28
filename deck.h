@@ -20,5 +20,8 @@ struct Card
 
 struct Deck * CreateDeck(size_t _nCards);
 struct Card  * CreateCard(Suit cardSuit, Rank cardRank);
+void ShuffleTheDeck(struct Deck *_deck, int _nCards);
+
+void DestroyDeck(struct Deck *_deck);
 
 # endif /* __CARDS_H__ */

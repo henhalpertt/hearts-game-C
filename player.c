@@ -3,6 +3,9 @@
 /* malloc for a new cards */
 #include <stdlib.h>
 #include "card.h"
+#define SUIT_AVAILABLE 1
+#define SUIT_NOT_FOUND 0
+#define LIMIT 13
 
 enum PlayerSpecs
 {
@@ -162,6 +165,7 @@ static void SortEachHand(struct Player *_player)
 		SwapCards(_player->m_cards[minIdx], _player->m_cards[card]);
 	}
 }
+
 void SortCards(struct Team *_team)
 {
 	int player;
@@ -184,6 +188,10 @@ void PlayerGiveCard(struct Team *_team, int _playerId, int *card, int(*PolicyGet
 {
 	int _cardIdx;
 	_cardIdx = PolicyGetCard(_idx);
+	if(_cardIdx > LIMIT || _cardIdx < 0)
+	{
+		return;
+	}
 	card[0] = GetSuit(_team->m_players[_playerId]->m_cards[_cardIdx]);
 	card[1] = GetRank(_team->m_players[_playerId]->m_cards[_cardIdx]);
 	int i;
@@ -216,7 +224,6 @@ void FindPlayer(struct Team *_team, int _rank, int _suit, int *playerID)
 			suit = GetSuit(_team->m_players[player]->m_cards[card]);
 			if(suit == _suit && rank == _rank)
 			{
-				printf("2ClubsID---->:%d\n\n", player);
 				*playerID = player;
 				return;
 			}
@@ -243,6 +250,78 @@ void FindIdx(struct Team *_team, int _rank, int _suit, int *idx, int _player)
 	*idx = 0;
 }
 
+int  CountSuit(struct Player *_player ,int _suit)
+{
+	int card, suit, cnt;
+	cnt = 0;
+	for(card=0; card<_player->m_nCardsInHand; card++)
+	{
+		suit = GetSuit(_player->m_cards[card]);
+		if(_suit == suit)
+		{
+			cnt++;
+		}
+	}
+	return cnt;
+}
+
+int AvailabilityOfSuit(struct Player *_player, int _leadSuit)
+{
+	int card, suit;
+	for(card=0; card<_player->m_nCardsInHand; card++)
+	{
+		suit = GetSuit(_player->m_cards[card]);
+		if(suit == _leadSuit)
+		{
+			return SUIT_AVAILABLE;
+		}
+	}
+	return SUIT_NOT_FOUND;
+}
+
+void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _leadRank, int *idx)
+{
+	int size, tmp=0, card;
+	int suit, rank;
+	int flg=0;
+
+	if(AvailabilityOfSuit(_team->m_players[_playerID],_leadSuit) == SUIT_NOT_FOUND)
+	{
+		SortEachHandByRank(_team->m_players[_playerID]);
+		*idx = _team->m_players[_playerID]->m_nCardsInHand-1;
+		return;
+	}
+	/* look for rank cards closest to LeadingRank */ 
+	for(card=0; card<_team->m_players[_playerID]->m_nCardsInHand; card++)
+	{
+		suit = GetSuit(_team->m_players[_playerID]->m_cards[card]);
+		rank = GetRank(_team->m_players[_playerID]->m_cards[card]);
+		
+		if(suit == _leadSuit && rank < _leadRank)
+		{
+
+			*idx = card;
+			flg=1;
+		}
+	}
+	if(flg == 1)
+	{
+		return;
+	}
+	/* rank cards are higher tahn leading cards, pick one that is closest to leadindRank */ 
+	for(card=0; card<_team->m_players[_playerID]->m_nCardsInHand; card++)
+	{
+		suit = GetSuit(_team->m_players[_playerID]->m_cards[card]);
+		rank = GetRank(_team->m_players[_playerID]->m_cards[card]);
+		
+		if(suit == _leadSuit && rank > _leadRank)
+		{
+			*idx = card;
+			return;
+		}
+	}
+}
+
 struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card **_cards)
 {
 	struct Player **newPlayers;
@@ -253,30 +332,43 @@ struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card *
 		return NULL;
 	}
 	
-	newTeam = (struct Team*)malloc(sizeof(struct Team));
+/*	newTeam = (struct Team*)malloc(sizeof(struct Team));*/
+	newTeam = (struct Team*)calloc(1, sizeof(struct Team));
 	if(newTeam == NULL)
 	{
 		return NULL;
 	}
 	
-	sizeOfPlayers = sizeof(struct Player) * (_nBots + _nHumans);
-	newPlayers = (struct Player**)malloc(sizeOfPlayers);
+/*	sizeOfPlayers = sizeof(struct Player) * (_nBots + _nHumans);*/
+/*	newPlayers = (struct Player**)malloc(sizeOfPlayers);*/
+	newPlayers = (struct Player**)calloc(_nBots + _nHumans, sizeof(struct Player));
 	if(newPlayers == NULL)
 	{
 		return NULL;
 	}
 	newTeam->m_players = newPlayers;
 	newTeam->m_totalPlayers = _nHumans + _nBots;
-	printf("total p: %d", newTeam->m_totalPlayers);
 	newTeam->m_magic = TEAM_MAGIC_NUM;
-	
 	MakePlayers(newTeam, newTeam->m_totalPlayers, _nCards, _cards);
 	
 /*	MakeBotPlayers(newTeam, _nBots, _nCards);*/
 	return newTeam;
 }
 
-
+void DestroyTeam(struct Team *_team)
+{
+	int p;
+	if(_team == NULL || _team->m_magic != TEAM_MAGIC_NUM)
+	{
+		return;
+	}
+	_team->m_magic = 0;
+	for(p=0; p<_team->m_totalPlayers; p++)
+	{
+		free(_team->m_players[p]);
+	}
+	free(_team);
+}
 
 
 

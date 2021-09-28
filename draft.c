@@ -287,46 +287,109 @@ static void ExchangeCardsCW(struct Trick *_trick)
 	_trick->m_game->m_team->m_players[0]->m_cards[12] = _trick->m_bank[bankCnt++];
 }
 
-void FindImportantCards(struct Trick *_trick)
-{
-	int player, cardCnt;
-	Rank rank;
-	Suit suit;
-	
-	for(player=0; player<VALID_NUM_PLAYERS; player++)
+
+
+	do
 	{
-		for(cardCnt = 0; cardCnt<CARDS_EACH_HAND; cardCnt++)
+		printf("-------- trick # : %d\n\n", newTrick->m_trickNumber);
+/*		turn = newTrick->m_trickNumber == 0 ? newTrick->m_playerWClubsTwo : newTrick->m_startingPlayer;*/
+		originalPlayer = turn;
+		if(newTrick->m_turnNum == 0)
 		{
-			rank = _trick->m_game->m_team->m_players[player]->m_cards[cardCnt]->m_rank;
-			suit = _trick->m_game->m_team->m_players[player]->m_cards[cardCnt]->m_suit;
-			if(rank == TWO && suit == CLUBS)
+			if(newTrick->m_trickNumber == 0)
 			{
-				_trick->m_playerWClubsTwo = player;
+				IdxOfTwoClubs = FindIdxOfCardViaRankSuit(newTrick->m_game, TWO, CLUBS, turn%VALID_NUM_PLAYERS);
+				GetCard(newTrick->m_game, turn%VALID_NUM_PLAYERS, card, PolicyPutOnTable, IdxOfTwoClubs);
+				newTrick->m_leadingSuit = CLUBS;
+				newTrick->suits[i] = card[0];
+				newTrick->ranks[i] = card[1];
 			}
-			if(rank == QUEEN && suit == SPADES)
+			else
+			{	
+/*				need to find a diff suit to start with. get rid of the largest values 1st */
+				GetCard(newTrick->m_game, turn%VALID_NUM_PLAYERS, card, PolicyPutOnTable, 12-newTrick->m_trickNumber);
+				newTrick->suits[i] = card[0];
+				newTrick->ranks[i] = card[1];
+				newTrick->m_leadingSuit = card[0];
+			}
+			/* check hearts status */
+			if(newTrick->suits[i] == HEARTS && newTrick->m_heartsStatus != BROKEN)
 			{
-				_trick->m_playerWSpadesQueen = player;
+				printf("HEARTS STATUS BROKEN ! \n");
+				newTrick->m_heartsStatus = BROKEN;
 			}
+			i++;
+			turn++;
+			newTrick->m_turnNum++;
 		}
+
+		/* 2,3,4 players */
+		while (turn % VALID_NUM_PLAYERS !=  originalPlayer)
+		{
+			bestIdx = FindBestCard(newTrick, turn%VALID_NUM_PLAYERS, card[1]);
+			GetCard(newTrick->m_game, turn%VALID_NUM_PLAYERS, card, PolicyPutOnTable, bestIdx);
+			newTrick->suits[i] = card[0];
+			newTrick->ranks[i] = card[1];
+			if(newTrick->suits[i] == HEARTS && newTrick->m_heartsStatus != BROKEN)
+			{
+				printf("HEARTS STATUS BROKEN ! \n");
+				newTrick->m_heartsStatus = BROKEN;
+			}
+			i++;
+			turn++;
+			newTrick->m_turnNum++;
+		}
+		 	
+		/* player with highest ranked card "wins" the trick */
+		curWinner = FindWinner(newTrick->ranks, newTrick->suits, originalPlayer, &heartCnt);
+		roundScores[curWinner] = roundScores[curWinner] + heartCnt;
+		
+		PrintGameCards(newTrick->m_game);
+		PrintTable(newTrick->suits, newTrick->ranks);
+		PrintScores(roundScores);
+		
+		newTrick->m_turnNum = 0;
+		newTrick->m_trickNumber++;
+		/* loser starts next round */
+		turn=curWinner;
+		i=0;
+		
+	} while(newTrick->m_trickNumber < 4);	
+}
+
+
+
+int FindWinner(int *_ranks, int *_suits, int _origPlayer, int *_heartCnt)
+{
+	int tmp=0, maxIdx, player;
+	for(player=0; player<4; player++)
+	{
+		if(_ranks[player] > tmp)
+		{
+			maxIdx = player;
+			tmp = _ranks[player];
+		}
+		if(_suits[player] == HEARTS)
+		{
+			*_heartCnt++;
+		}
+		if(_ranks[player] = QUEEN && _suits[player] == SPADES)
+		{
+			*_heartCnt += QSPADES_PENALTY;
+		}
+	}
+	return (maxIdx + _origPlayer) % VALID_NUM_PLAYERS;
+}
+
+void PrintScores(int *_scores)
+{
+	int nPlayers, score;
+	for(score=0; score<VALID_NUM_PLAYERS; score++)
+	{
+		printf("player: %d Score: %d \n", score, _scores[score]);
 	}
 }
 
-PassThreeCards(struct Trick *_trick)
-{
-	int player, cardCnt;
-	for(player=0; player<VALID_NUM_PLAYERS; player++)
-	{
-		SortEachHandByRank(_trick->m_game->m_team->m_players[player]);
-	}	
-	ExchangeCardsCW(_trick);
-	
-/*	 re-sort according to game policy */
-	for(player=0; player<VALID_NUM_PLAYERS; player++)
-	{
-		SortEachHand(_trick->m_game->m_team->m_players[player]);
-	}
-/*	 find player that holds 2 of cards & player w/ queen of spades */
-	FindImportantCards(_trick);
-}
+
 
 

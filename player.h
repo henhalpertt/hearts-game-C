@@ -25,6 +25,10 @@ void GiveCardsToPlayer(struct Team *_team, int _playerId, int rank, int suit);
 void FindPlayer(struct Team *_team, int _rank, int _suit, int *playerID);
 void FindIdx(struct Team *_team, int _rank, int _suit, int *idx, int _player);
 
+void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _leadRank, int *idx);
+
 struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card **_cards);
+
+void DestroyTeam(struct Team *_team);
 
 #endif /* __PLAYER_H__ */
