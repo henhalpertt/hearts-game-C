@@ -240,7 +240,7 @@ void FindIdx(struct Team *_team, int _rank, int _suit, int *idx, int _player)
 			return;
 		}
 	}
-	
+	*idx = 0;
 }
 
 struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card **_cards)
