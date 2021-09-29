@@ -1,7 +1,7 @@
 #ifndef __ROUND_H__
 #define __ROUND_H__
 
-void SetUpGame(int _nBots, int _nHumans);
+void SetUpGame(int _nPlayers);
 
 struct Deck * GetDeckForHearts(int _nCards);
 

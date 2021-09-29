@@ -1,15 +1,10 @@
 #include <stdio.h>
 /*#include "round.h"*/
 #include "round.h"
-#define PARAMS 3
-
+#define ONE_PLAYER 1
 int main(void)
 {
-/*	SetUpGame(in);*/
-/*	struct Game *game;*/
-	SetUpGame(4, 0);
-	
-
+	SetUpGame(ONE_PLAYER); /*how many (real) players want to play this game? */
 	return 0;
 }
 

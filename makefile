@@ -3,14 +3,14 @@
 TARGET= t.out
 CC= gcc
 CFLAGS= -ansi -pedantic -Wall -g
-OBJS= card.o 
+OBJS= main.o 
 # Deck.o Round.o Player.o
 
 $(TARGET): $(OBJS)
 	$(C  C) -o $(TARGET) $(OBJS)
 	
-card.o: card.c
-	$(CC) $(CFLAGS) -c card.c
+main.o: main.c
+	$(CC) $(CFLAGS) -c main.c
 	
 #sortmain.o: sortmain.c sort.h
 #	$(CC) $(CFLAGS) -c sortmain.c

@@ -43,6 +43,7 @@ void RefillDeck(struct Game *_game)
 	_game->m_team = newTeam;
 	
 }
+
 struct Game * CreateGame(int _nBots, int _nHumans) /* called in main.c */
 {
 	struct Game *newGame;
@@ -104,26 +105,9 @@ void PrintGameCards(struct Game *_game)
 	PrintCards(_game->m_team);
 }
 
-/* pnt to function */
-int CheckStatus(int(*Criteria)(int n1, int n2))
+void PrintHand(struct Game *_game, int _playerId)
 {
-	
-	int new1, new2, res;
-	new1 = 1;
-	new2 = 10;
-	res = Criteria(new1, new2);
-	if(res == 1)
-	{
-		printf("Game still running");
-	}
-	return 123;
-}
-
-CheckScores(void(*Criteria)(int *a, int *b, int *c, int *d))
-{
-	int a,b,c,d;
-	Criteria( &a, &b, &c, &d);
-	printf("a: %d b: %d, c:%d, d:%d", a, b, c, d);
+	PrintCardsHand(_game->m_team, _playerId);
 }
 
 void GetCardFromPlayer(struct Game *_game, int _playerId, int *card, int(*PolicyGetCard)(int), int _cardIdx)
@@ -131,11 +115,15 @@ void GetCardFromPlayer(struct Game *_game, int _playerId, int *card, int(*Policy
 	PlayerGiveCard(_game->m_team, _playerId, card, PolicyGetCard, _cardIdx);
 }
 
+void SeeCardGame(struct Game *_game, int _playerId, int *card, int _idx)
+{
+	PlayerSeeCard(_game->m_team, _playerId, card, _idx);
+}
+
 void GiveCardsToGame(struct Game *_game, int _playerId, int rank, int suit)
 {
 	GiveCardsToPlayer(_game->m_team, _playerId, rank, suit);
 }
-
 
 void FindPlayerGame(struct Game *_game, int _rank, int _suit, int *playerID)
 {
@@ -147,9 +135,14 @@ void FindIdxGame(struct Game *_game, int _rank, int _suit, int *idx, int _player
 	FindIdx(_game->m_team, _rank, _suit, idx, _player);
 }
 
-void FindBestCardGame(struct Game *_game, int _playerID, int _leadSuit, int _leadRank, int *idx)
+void FindBestCardGame(struct Game *_game, int _playerID, int _leadSuit, int _leadRank, int *idx, int _status)
 {
-	FindBestCardIdx(_game->m_team, _playerID, _leadSuit, _leadRank, idx);
+	FindBestCardIdx(_game->m_team, _playerID, _leadSuit, _leadRank, idx, _status);
+}
+
+int CheckSuitGame(struct Game *_game, int _playerID, int _leadSuit)
+{
+	return CheckSuitInHand(_game->m_team, _playerID, _leadSuit);
 }
 
 void PrintBoard(struct Game *_game)
@@ -184,28 +177,27 @@ int UpdateScores(struct Game *_game, int *_updatedScores, int(*GameStatus)(int *
 {
 	int nPlayers, score, minIdx;
 	nPlayers = _game->m_bots + _game->m_humans;
-	
-	printf("game.c ------ \n");
+	printf("------- SCORE BOARD ------ \n");
+/*	PrintBoard(_game);*/
 	for(score=0; score<nPlayers; score++)
 	{
 		_game->m_scores[score] += _updatedScores[score];
 		if(GameStatus(_game->m_scores) == GAME_OVER)
 		{
+			printf("GAME FINAL RESULTS:\n");
 			PrintBoard(_game);
 			minIdx = GetWinner(_game);
-			printf("The winner is Player #%d ", minIdx);
+			printf("\nThe winner is Player #%d\n", minIdx);
 			DestroyGame(_game);
 			return GAME_OVER;
 		}
 	}
-	
 	return RUNNING_GAME;
 }
 
 void DestroyGame(struct Game *_game)
 {
 	int i;
-
 	if(_game == NULL || _game->m_magic != GAME_MAGIC_NUM)
 	{
 		return;

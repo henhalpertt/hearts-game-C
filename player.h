@@ -18,14 +18,19 @@ enum PlayerSpecs
 } PlayerSpecs;
 
 void PrintCards(struct Team *_team);
+void PrintCardsHand(struct Team *_team, int _playerId);
+
 void SortCards(struct Team *_team);
 void SortCardsByRank(struct Team *_team);
+
 void PlayerGiveCard(struct Team *_team, int _playerId, int *card, int(*PolicyGetCard)(int), int _cardIdx);
+void PlayerSeeCard(struct Team *_team, int _playerId, int *card, int _idx);
 void GiveCardsToPlayer(struct Team *_team, int _playerId, int rank, int suit);
+
 void FindPlayer(struct Team *_team, int _rank, int _suit, int *playerID);
 void FindIdx(struct Team *_team, int _rank, int _suit, int *idx, int _player);
-
-void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _leadRank, int *idx);
+void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _leadRank, int *idx, int _status);
+int CheckSuitInHand(struct Team *_team, int _playerID, int _leadSuit);
 
 struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card **_cards);
 

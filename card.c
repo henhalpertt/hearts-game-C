@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #define CARD_MAGIC_NUM 19931302
 #include "card.h"
-
+#include "SpecialChars.h"
 struct Card
 {
 	Rank m_suit;
@@ -55,6 +55,35 @@ int GetSuit(struct Card *_card)
 
 void PrintCard(struct Card *_card)
 {
-	printf("rank:%d suit:%d", _card->m_rank, _card->m_suit);
+	if(_card->m_suit == HEARTS)
+	{
+		printf("%s%s%d%s ", BOLD_ON, RED, _card->m_rank, HEART);
+		printf(" ");
+		printf("%s", WHITE);
+		return;
+	}
+	if(_card->m_suit == SPADES)
+	{
+		printf("%s%s%d%s ", BOLD_ON, YELLOW, _card->m_rank, SPADE);
+		printf(" ");
+		printf("%s", WHITE);
+		return;
+	}
+	if(_card->m_suit == CLUBS)
+	{
+		printf("%s%s%d %s ", BOLD_ON, BLUE, _card->m_rank, CLUB);
+		printf(" ");
+		printf("%s", WHITE);
+		return;
+	}
+	if(_card->m_suit == DIAMONDS)
+	{
+		printf("%s%s%d %s ", BOLD_ON, CYAN, _card->m_rank, DIAMOND);
+		printf(" ");
+		printf("%s", WHITE);
+		return;
+	}
+	
+	
 }
 

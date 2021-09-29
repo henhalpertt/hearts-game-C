@@ -3,9 +3,12 @@
 /* malloc for a new cards */
 #include <stdlib.h>
 #include "card.h"
+#include "SpecialChars.h"
 #define SUIT_AVAILABLE 1
 #define SUIT_NOT_FOUND 0
 #define LIMIT 13
+#define BROKEN 0
+#define UNBROKEN 1
 
 enum PlayerSpecs
 {
@@ -81,8 +84,6 @@ static void MakePlayers(struct Team *_newTeam, int _nPlayers, int _nCards, struc
 	}
 }
 
-
-
 void PrintCards(struct Team *_team)
 {
 	int card, player;
@@ -96,6 +97,19 @@ void PrintCards(struct Team *_team)
 		}
 		printf("\n");
 	}
+}
+
+void PrintCardsHand(struct Team *_team, int _playerId)
+{
+	int card;
+	printf("ID: %d \n", _team->m_players[_playerId]->m_id);
+	for(card=0; card<(_team->m_players[_playerId]->m_nCardsInHand); card++)
+	{
+		printf("%s%d.",BOLD_ON, card);
+		PrintCard(_team->m_players[_playerId]->m_cards[card]);
+
+	}
+	printf("\n");
 }
 
 static int FindMinInSubset(struct Player *_player, int _idx)
@@ -187,6 +201,7 @@ void SortCardsByRank(struct Team *_team)
 void PlayerGiveCard(struct Team *_team, int _playerId, int *card, int(*PolicyGetCard)(int _idx), int _idx)
 {
 	int _cardIdx;
+	int i;
 	_cardIdx = PolicyGetCard(_idx);
 	if(_cardIdx > LIMIT || _cardIdx < 0)
 	{
@@ -194,12 +209,23 @@ void PlayerGiveCard(struct Team *_team, int _playerId, int *card, int(*PolicyGet
 	}
 	card[0] = GetSuit(_team->m_players[_playerId]->m_cards[_cardIdx]);
 	card[1] = GetRank(_team->m_players[_playerId]->m_cards[_cardIdx]);
-	int i;
 	for(i = _cardIdx; i<(_team->m_players[_playerId]->m_nCardsInHand-1); i++)
 	{
 		_team->m_players[_playerId]->m_cards[i] = _team->m_players[_playerId]->m_cards[i+1];
 	}
 	_team->m_players[_playerId]->m_nCardsInHand--;
+}
+
+void PlayerSeeCard(struct Team *_team, int _playerId, int *card, int _idx)
+{
+	int _cardIdx;
+	_cardIdx = PolicyGetCard(_idx);
+	if(_cardIdx > LIMIT || _cardIdx < 0)
+	{
+		return;
+	}
+	card[0] = GetSuit(_team->m_players[_playerId]->m_cards[_cardIdx]);
+	card[1] = GetRank(_team->m_players[_playerId]->m_cards[_cardIdx]);
 }
 
 void GiveCardsToPlayer(struct Team *_team, int _playerId, int rank, int suit)
@@ -279,7 +305,17 @@ int AvailabilityOfSuit(struct Player *_player, int _leadSuit)
 	return SUIT_NOT_FOUND;
 }
 
-void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _leadRank, int *idx)
+int CheckSuitInHand(struct Team *_team, int _playerID, int _leadSuit, int *result)
+{
+	if(AvailabilityOfSuit(_team->m_players[_playerID], _leadSuit) == SUIT_NOT_FOUND)
+	{
+		return SUIT_NOT_FOUND;
+	}
+	return SUIT_AVAILABLE;
+}
+
+
+void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _leadRank, int *idx, int status)
 {
 	int size, tmp=0, card;
 	int suit, rank;
@@ -288,10 +324,19 @@ void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _lead
 	if(AvailabilityOfSuit(_team->m_players[_playerID],_leadSuit) == SUIT_NOT_FOUND)
 	{
 		SortEachHandByRank(_team->m_players[_playerID]);
-		*idx = _team->m_players[_playerID]->m_nCardsInHand-1;
+		if(status == BROKEN)
+		{
+			/* put low rank cards - cautious policy */
+			*idx = 0;
+		}
+		else
+		{
+			/* put high rank cards - risky policy */
+			*idx = _team->m_players[_playerID]->m_nCardsInHand-1;
+		}
 		return;
 	}
-	/* look for rank cards closest to LeadingRank */ 
+	/* suit found. look for rank cards closest to LeadingRank */ 
 	for(card=0; card<_team->m_players[_playerID]->m_nCardsInHand; card++)
 	{
 		suit = GetSuit(_team->m_players[_playerID]->m_cards[card]);
@@ -299,7 +344,6 @@ void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _lead
 		
 		if(suit == _leadSuit && rank < _leadRank)
 		{
-
 			*idx = card;
 			flg=1;
 		}
@@ -308,7 +352,7 @@ void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _lead
 	{
 		return;
 	}
-	/* rank cards are higher tahn leading cards, pick one that is closest to leadindRank */ 
+	/* rank cards are higher than leading cards, pick one that is closest to leadingRank */ 
 	for(card=0; card<_team->m_players[_playerID]->m_nCardsInHand; card++)
 	{
 		suit = GetSuit(_team->m_players[_playerID]->m_cards[card]);
@@ -321,6 +365,8 @@ void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _lead
 		}
 	}
 }
+
+
 
 struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card **_cards)
 {
