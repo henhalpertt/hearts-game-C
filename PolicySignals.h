@@ -1,0 +1,17 @@
+#define ZEROTH_TRICK 0
+#define CARDS_EACH_HAND 13
+#define FULL_DECK 52
+#define BANK_SIZE 12
+#define BROKEN 0
+#define UNBROKEN 1
+#define FULL_RND 13
+#define TABLE_SIZE 4
+#define QSPADES_PENALTY 13
+#define GAME_OVER 100
+#define RUNNING_GAME 1
+#define ONE_PLAYER 1
+#define BOT 0
+#define HUMAN 1
+#define SUIT_AVAILABLE 1
+#define SUIT_NOT_FOUND 0
+#define VALID_NUM_PLAYERS 4

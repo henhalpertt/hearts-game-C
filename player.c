@@ -239,8 +239,8 @@ void GiveCardsToPlayer(struct Team *_team, int _playerId, int rank, int suit)
 void FindPlayer(struct Team *_team, int _rank, int _suit, int *playerID)
 {
 	int totalNPlayers, card;
-	totalNPlayers = _team->m_totalPlayers;
 	int suit, rank, player;
+	totalNPlayers = _team->m_totalPlayers;
 	
 	for(player=0; player<totalNPlayers; player++)
 	{
@@ -260,9 +260,8 @@ void FindPlayer(struct Team *_team, int _rank, int _suit, int *playerID)
 void FindIdx(struct Team *_team, int _rank, int _suit, int *idx, int _player)
 {
 	int totalNPlayers, card;
-	totalNPlayers = _team->m_totalPlayers;
 	int suit, rank, player;
-	
+	totalNPlayers = _team->m_totalPlayers;
 	for(card=0; card<_team->m_players[_player]->m_nCardsInHand; card++)
 	{
 		rank = GetRank(_team->m_players[_player]->m_cards[card]);

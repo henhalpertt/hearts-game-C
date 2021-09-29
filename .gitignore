@@ -5,3 +5,5 @@ t.out
 ./a.out
 # core
 core
+# .o files
+*.o

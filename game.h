@@ -1,7 +1,7 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 typedef struct Game Game;
-typedef struct Team Team;
+/*typedef struct Team Team;*/
 
 void PrintGameCards(struct Game *_game);
 void PrintHand(struct Game *_game, int _playerId);

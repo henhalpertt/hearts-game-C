@@ -5,32 +5,15 @@
 #include <string.h>
 #include <time.h>
 #define TRICK_MAGIC_NUM 1435654
-#define ROUND_MAGIC_NUM 2334543
-#define ROUNDS_MAGIC_NUM 2983643
-#define ZEROTH_TRICK 0
-#define CARDS_EACH_HAND 13
-#define FULL_DECK 52
-#define BANK_SIZE 12
-#define BROKEN 0
-#define UNBROKEN 1
-#define FULL_RND 13
-#define TABLE_SIZE 4
-#define QSPADES_PENALTY 13
-#define GAME_OVER 100
-#define RUNNING_GAME 1
-#define ONE_PLAYER 1
-#define BOT 0
-#define HUMAN 1
-#define SUIT_AVAILABLE 1
-#define SUIT_NOT_FOUND 0
 
+#include "PolicySignals.h"
 #include "SpecialChars.h"
 #include "game.h"
 #include "round.h"
 #include "deck.h"
 #include "card.h"
-#include "player.h"
-
+/*#include "player.h"*/
+   
 struct Trick
 {
 	struct Game *m_game; /* communicating game status and scores */
@@ -46,23 +29,6 @@ struct Trick
 	int m_heartsStatus; /* was hearts broken or is it still unbroken */
 	int m_magic;
 };
-
-struct Round
-{
-	struct Trick **m_tricks; /* each round has 13 tricks */
-	int m_roundNumber; /* round 1, ... n rounds */
-	int m_ovreallPenalties; /* scores for each player at the end of round (13 tricks) */
-	int m_currentWinner; /*the player w/ least m_penalties pts */
-	int m_heartsStatus;
-	int m_magic;
-};
-
-struct Rounds 
-{
-	struct Round **m_rounds;
-	int m_magic;
-};
-
 
 static struct Trick * CreateTrick(int _trickNum, int _nBots, int _nHumans)
 {
@@ -118,16 +84,6 @@ int PolicyPutOnTable(int _cardIdx) /* add trick number ad param*/
 	return _cardIdx;
 }
 
-PolicyFindLowestCard(struct Trick *_trick)
-{
-	/* check cards on table */
-	/* Tell player to put a card in that suit, and with rank lower then what is currently the lowest, if possible */
-	
-	/* scenario 1: player doesnt have cards from suit */
-	/* scenario 2: player has cards from same suit, then put smallest one you got in hand */ 
-	
-	
-}
 
 /* ------------------               ----------------------*/
 
@@ -399,6 +355,8 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 	int tmpRank = 0, curWinner;
 	int roundScores[4] = {0}, heartCnt;
 	int result, tmpIdx;
+	int *m;
+	int score;
 	PassThreeCards(newTrick->m_game);
 	FindImportantCards(newTrick);
 	turn = newTrick->m_playerWClubsTwo;
@@ -498,7 +456,6 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 	
 	printf("end---\n");
 	/* communicate scores back to game */
-	int *m, score;
 	m = (int *)calloc(1,sizeof(roundScores));
 	newTrick->m_penalties = m;
 	

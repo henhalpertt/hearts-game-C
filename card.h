@@ -1,6 +1,5 @@
 #ifndef __CARDS_H__
 #define __CARDS_H__
-#include "Errors.h"
 #include "CardSpecs.h"
 
 /*
