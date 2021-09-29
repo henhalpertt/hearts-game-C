@@ -165,13 +165,13 @@ void PrintBoard(struct Game *_game)
 int GetWinner(struct Game *_game)
 {
 	int tmp;
-	int minIdx, score, nPlayers;
+	int minIdx=0, score, nPlayers;
 	nPlayers = _game->m_bots + _game->m_humans;
 	
 	tmp = _game->m_scores[0];
-	for(score=1; score<nPlayers; score++)
+	for(score=0; score<nPlayers; score++)
 	{
-		if(tmp > _game->m_scores[score])
+		if(_game->m_scores[score] < tmp)
 		{
 			tmp = _game->m_scores[score];
 			minIdx = score;
@@ -191,12 +191,14 @@ int UpdateScores(struct Game *_game, int *_updatedScores, int(*GameStatus)(int *
 		_game->m_scores[score] += _updatedScores[score];
 		if(GameStatus(_game->m_scores) == GAME_OVER)
 		{
+			PrintBoard(_game);
 			minIdx = GetWinner(_game);
 			printf("The winner is Player #%d ", minIdx);
+			DestroyGame(_game);
 			return GAME_OVER;
 		}
 	}
-	PrintBoard(_game);
+	
 	return RUNNING_GAME;
 }
 
