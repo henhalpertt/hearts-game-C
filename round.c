@@ -149,7 +149,6 @@ int FindIdxOfCardViaRankSuit(struct Game *_game, int _rank, int _suit, int _play
 	return idx;
 }
 
-
 void FindImportantCards(struct Trick *_trick)
 {
 	int rank, suit, playerID;
@@ -222,7 +221,7 @@ PrintTableCard(int _player, int _rank, int _suit)
 	switch (_suit)
 	{
 		case (HEARTS):
-			printf("%splayer #%d selected %s%d%s\n",BOLD_ON,_player, RED, _rank, HEART);
+			printf("%s%splayer #%d selected %s%d%s\n",BOLD_ON, GREEN,_player, RED, _rank, HEART);
 			printf(" ");
 			printf("%s", WHITE);
 			return;
@@ -232,7 +231,7 @@ PrintTableCard(int _player, int _rank, int _suit)
 			printf("%s", WHITE);
 			return;
 		case (CLUBS):
-			printf("%splayer #%d selected %s%d%s\n",BOLD_ON,_player, BLUE, _rank, CLUB);
+			printf("%s%splayer #%d selected %s%d%s\n",BOLD_ON,GREEN,_player, BLUE, _rank, CLUB);
 			printf(" ");
 			printf("%s", WHITE);
 			return;
@@ -260,7 +259,7 @@ void CallPlayerOne(struct Trick *_trick , int *_card, int _turn)
 		{
 			printf("idx out of bounds.\n");
 		}
-		else if(_trick->m_heartsStatus != BROKEN && _card[0] == HEARTS) /* result == SUIT_AVAILABLE for 2,3,4*/
+		else if(_trick->m_heartsStatus != BROKEN && _card[0] == HEARTS) 
 		{
 			printf("Cant Put a card from suit of hearts, choose a different suit.\n");
 		}
@@ -279,7 +278,7 @@ void CallPlayer(struct Trick *_trick , int *_card, int _turn, int _leadSuit)
 	result = CheckSuitGame(_trick->m_game, _turn, _leadSuit);
 	printf("(HUMAN)your cards: ");
 	PrintHand(_trick->m_game, _turn);
-	while(flg==0)
+	while(1)
 	{
 		printf("\nEnter card index, index 0 is the first card in your hand\n");
 		scanf("%d", &playerIdx);
@@ -294,6 +293,7 @@ void CallPlayer(struct Trick *_trick , int *_card, int _turn, int _leadSuit)
 			if(result == SUIT_AVAILABLE)
 			{
 				printf("\nThe suit of the current trick is %d, you have that suit so you must play it\n", _leadSuit);
+				continue;
 			}
 			if(result == SUIT_NOT_FOUND)
 			{
@@ -301,28 +301,23 @@ void CallPlayer(struct Trick *_trick , int *_card, int _turn, int _leadSuit)
 				{
 					if(_trick->m_heartsStatus != BROKEN)
 					{
-						printf("Hearts Not allowed yet.\n");
+						_trick->m_heartsStatus = BROKEN;
 					}
-					else
-					{
-						GetCard(_trick->m_game, _turn, _card, PolicyGetCard, playerIdx);
-						flg = 1;
-					}
-				}
-				else
-				{
-					GetCard(_trick->m_game, _turn, _card, PolicyGetCard, playerIdx);
-					flg = 1;	
 				}
 			}
+			GetCard(_trick->m_game, _turn, _card, PolicyGetCard, playerIdx);
+			return;
 		}
 		else
 		{
 			/* same suit */
 			GetCard(_trick->m_game, _turn, _card, PolicyGetCard, playerIdx);
-			flg = 1;
+			return;
 		}
+		
 	}
+	printf("\nreaching here---->\n");
+/*	GetCard(_trick->m_game, _turn, _card, PolicyGetCard, playerIdx);*/
 }
 
 
