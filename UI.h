@@ -15,4 +15,6 @@ void PrintScores(int *_scores, int _nPlayers);
 void PrintTableCard(int _player, int _rank, int _suit);
 
 void PrintTable(int *suits, int *ranks);
+
+void UserInput(int *_in);
 # endif /* __UI_H__ */

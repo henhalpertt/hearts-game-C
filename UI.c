@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "card.h"
 #include "UI.h"
-
 void PrintStrUI(char *str)
 {
 	printf("%s", str);
@@ -112,6 +111,11 @@ void PrintTableCard(int _player, int _rank, int _suit)
 			printf("%s", WHITE);
 			return;
 	}
+}
+
+void UserInput(int *_in)
+{
+	scanf("%d", _in);
 }
 
 

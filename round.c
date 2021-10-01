@@ -192,7 +192,8 @@ void CallPlayerOne(struct Trick *_trick , int *_card, int _turn)
 	while(flg==0)
 	{
 		PrintStrUI(ENTER_CARDIDX);
-		scanf("%d", &playerIdx);
+		UserInput(&playerIdx);
+/*		scanf("%d", &playerIdx);*/
 		SeeCardGame(_trick->m_game, _turn, _card, playerIdx);
 		/* check if idx is valid */
 		if(playerIdx < 0 || playerIdx > 12 - _trick->m_trickNumber)
@@ -221,7 +222,8 @@ void CallPlayer(struct Trick *_trick , int *_card, int _turn, int _leadSuit)
 	while(1)
 	{
 		PrintStrUI(ENTER_CARDIDX);
-		scanf("%d", &playerIdx);
+		UserInput(&playerIdx);
+/*		scanf("%d", &playerIdx);*/
 		SeeCardGame(_trick->m_game, _turn, _card, playerIdx);
 		/* check if idx is valid */
 		if(playerIdx < 0 || playerIdx > 12 - _trick->m_trickNumber)
