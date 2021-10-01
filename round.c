@@ -2,7 +2,7 @@
 #include <stdio.h>
 /* malloc for a new cards */
 #include <stdlib.h>
-#include <string.h>
+/* delay for some parts of the game */
 #include <time.h>
 #define TRICK_MAGIC_NUM 1435654
 
@@ -11,9 +11,7 @@
 #include "game.h"
 #include "round.h"
 #include "deck.h"
-#include "card.h"
-/*#include "player.h"*/
-   
+
 struct Trick
 {
 	struct Game *m_game; /* communicating game status and scores */
@@ -39,7 +37,6 @@ static struct Trick * CreateTrick(int _trickNum, int _nBots, int _nHumans)
 	{
 		return NULL;
 	}
-	
 	newTrick->m_game = CreateGame(_nBots, _nHumans);
 	
 	newTrick->m_trickNumber = _trickNum;
@@ -74,17 +71,6 @@ int PolicyGetCard(int _cardIdx)
 	/* return the  card idx  and to get rid of the cards */
 	return _cardIdx;
 }
-
-int PolicyPutOnTable(int _cardIdx) /* add trick number ad param*/
-{
-/*	if(_heartsStat == BROKEN)*/
-/*	{*/
-/*		*/
-/*	}*/
-	return _cardIdx;
-}
-
-
 /* ------------------               ----------------------*/
 
 struct Card * GetCard(struct Game *_game, int _playerId, int *card, int(*Policy)(int), int _cardIdx)
@@ -173,23 +159,13 @@ PassThreeCards(struct Game *_game)
 	SortHands(_game);
 }
 
-void PrintTable(int *suits, int *ranks)
-{
-	int i;
-	printf("------ TABLE: \n");
-	for(i=0; i<4; i++)
-	{
-		printf("rank: %d suit: %d\n", ranks[i], suits[i]);
-	}
-}
-
-int FindWinner(int *_ranks, int *_suits, int _origPlayer, int *_heartCnt)
+int FindWinner(int *_ranks, int *_suits, int _origPlayer, int *_heartCnt, int _leadSuit)
 {
 	int tmp=0, maxIdx, player;
 	int hrtcnt=0;
 	for(player=0; player<4; player++)
 	{
-		if(_ranks[player] > tmp)
+		if(_ranks[player] > tmp && _suits[player] == _leadSuit)
 		{
 			maxIdx = player;
 			tmp = _ranks[player];
@@ -207,61 +183,25 @@ int FindWinner(int *_ranks, int *_suits, int _origPlayer, int *_heartCnt)
 	return (maxIdx + _origPlayer) % VALID_NUM_PLAYERS;
 }
 
-void PrintScores(int *_scores)
-{
-	int nPlayers, score;
-	for(score=0; score<VALID_NUM_PLAYERS; score++)
-	{
-		printf("player: %d Score: %d \n", score, _scores[score]);
-	}
-}
-
-PrintTableCard(int _player, int _rank, int _suit)
-{
-	switch (_suit)
-	{
-		case (HEARTS):
-			printf("%s%splayer #%d selected %s%d%s\n",BOLD_ON, GREEN,_player, RED, _rank, HEART);
-			printf(" ");
-			printf("%s", WHITE);
-			return;
-		case (SPADES):
-			printf("%splayer #%d selected %s%d%s\n",BOLD_ON,_player, YELLOW,  _rank, SPADE);
-			printf(" ");
-			printf("%s", WHITE);
-			return;
-		case (CLUBS):
-			printf("%s%splayer #%d selected %s%d%s\n",BOLD_ON,GREEN,_player, BLUE, _rank, CLUB);
-			printf(" ");
-			printf("%s", WHITE);
-			return;
-		case (DIAMONDS):
-			printf("%splayer #%d selected %s%d%s\n",BOLD_ON,_player, CYAN, _rank, DIAMOND);
-			printf(" ");
-			printf("%s", WHITE);
-			return;
-	}
-}
-
 void CallPlayerOne(struct Trick *_trick , int *_card, int _turn)
 {
 	int playerIdx, result;
 	int flg=0;
-	printf("your cards: ");
+	PrintStrUI(YOUR_CARDS);
 	PrintHand(_trick->m_game, _turn);
 	while(flg==0)
 	{
-		printf("\nEnter card index, index 0 is the first card in your hand\n");
+		PrintStrUI(ENTER_CARDIDX);
 		scanf("%d", &playerIdx);
 		SeeCardGame(_trick->m_game, _turn, _card, playerIdx);
 		/* check if idx is valid */
 		if(playerIdx < 0 || playerIdx > 12 - _trick->m_trickNumber)
 		{
-			printf("idx out of bounds.\n");
+			PrintStrUI(IDX_BOUNDS);
 		}
 		else if(_trick->m_heartsStatus != BROKEN && _card[0] == HEARTS) 
 		{
-			printf("Cant Put a card from suit of hearts, choose a different suit.\n");
+			PrintStrUI(HEART_SUIT_ERR);
 		}
 		else
 		{
@@ -276,23 +216,24 @@ void CallPlayer(struct Trick *_trick , int *_card, int _turn, int _leadSuit)
 	int playerIdx, result;
 	int flg=0;
 	result = CheckSuitGame(_trick->m_game, _turn, _leadSuit);
-	printf("(HUMAN)your cards: ");
+	PrintStrUI(HUMAN_CARDS);
 	PrintHand(_trick->m_game, _turn);
 	while(1)
 	{
-		printf("\nEnter card index, index 0 is the first card in your hand\n");
+		PrintStrUI(ENTER_CARDIDX);
 		scanf("%d", &playerIdx);
 		SeeCardGame(_trick->m_game, _turn, _card, playerIdx);
 		/* check if idx is valid */
 		if(playerIdx < 0 || playerIdx > 12 - _trick->m_trickNumber)
 		{
-			printf("idx out of bounds.\n");
+			PrintStrUI(IDX_BOUNDS);
 		}
 		else if(_leadSuit != _card[0])
 		{
 			if(result == SUIT_AVAILABLE)
 			{
-				printf("\nThe suit of the current trick is %d, you have that suit so you must play it\n", _leadSuit);
+				SuitNumToSuitNameUI(_leadSuit);
+				PrintStrUI(WRONG_SUIT);
 				continue;
 			}
 			if(result == SUIT_NOT_FOUND)
@@ -302,6 +243,7 @@ void CallPlayer(struct Trick *_trick , int *_card, int _turn, int _leadSuit)
 					if(_trick->m_heartsStatus != BROKEN)
 					{
 						_trick->m_heartsStatus = BROKEN;
+						PrintStrUI(HEARTS_BROKEN);
 					}
 				}
 			}
@@ -316,8 +258,6 @@ void CallPlayer(struct Trick *_trick , int *_card, int _turn, int _leadSuit)
 		}
 		
 	}
-	printf("\nreaching here---->\n");
-/*	GetCard(_trick->m_game, _turn, _card, PolicyGetCard, playerIdx);*/
 }
 
 
@@ -334,8 +274,7 @@ void CallPlayerBot(struct Trick *_trick , int *_card, int _turn, int _leadSuit)
 	int playerIdx, result;
 	int flg=0;
 	int cards[CARDS_EACH_HAND];
-/*	result = CheckSuitGame(_trick->m_game, _turn, _leadSuit); */
-	printf("(BOT) your cards: ");
+	PrintStrUI(BOT_CARDS);
 	PrintHand(_trick->m_game, _turn);
 	
 	playerIdx = FindBestCard(_trick, _turn, _card[1], _trick->m_heartsStatus);
@@ -359,11 +298,11 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 	i=0;
 	do
 	{
-/*		printf("LEADINGSUIT: %d\n", newTrick->m_leadingSuit);*/
-		printf("-------- trick #%d --------- \n", newTrick->m_trickNumber);
+		PrintValueUI(TRICK_NUM, newTrick->m_trickNumber);
 		originalPlayer = turn;
 		if(newTrick->m_turnNum == 0)
 		{
+			PrintHand(newTrick->m_game, turn%VALID_NUM_PLAYERS);
 			if(newTrick->m_trickNumber == 0)
 			{
 				IdxOfTwoClubs = FindIdxOfCardViaRankSuit(newTrick->m_game, TWO, CLUBS, turn%VALID_NUM_PLAYERS);
@@ -382,7 +321,6 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 					{
 						tmpIdx = tmpIdx-1;
 					}
-					
 					GetCard(newTrick->m_game, turn%VALID_NUM_PLAYERS, card, PolicyGetCard, tmpIdx);
 					newTrick->suits[i] = card[0];
 					newTrick->ranks[i] = card[1];
@@ -399,13 +337,14 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 			/* check hearts status */
 			if(newTrick->suits[i] == HEARTS && newTrick->m_heartsStatus != BROKEN)
 			{
-				printf("HEARTS STATUS BROKEN \n");
+				PrintStrUI(HEARTS_BROKEN);
 				newTrick->m_heartsStatus = BROKEN;
 			}
 			PrintTableCard(turn%VALID_NUM_PLAYERS, newTrick->ranks[i], newTrick->suits[i]);
 			i++;
 			turn++;
 			newTrick->m_turnNum++;
+			sleep(1);
 		}
 
 		/* 2,3,4 players */
@@ -414,33 +353,28 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 			if(_botOrHuman[turn%VALID_NUM_PLAYERS] == BOT)
 			{
 				CallPlayerBot(newTrick, card, turn%VALID_NUM_PLAYERS, newTrick->m_leadingSuit);
-				
-/*				bestIdx = FindBestCard(newTrick, turn%VALID_NUM_PLAYERS, card[1], newTrick->m_heartsStatus);*/
-/*				GetCard(newTrick->m_game, turn%VALID_NUM_PLAYERS, card, PolicyGetCard, bestIdx);*/
 			}
 			else
 			{
 				CallPlayer(newTrick, card, turn%VALID_NUM_PLAYERS, newTrick->m_leadingSuit);
 			}
-			
 			newTrick->suits[i] = card[0];
 			newTrick->ranks[i] = card[1];
 			if(newTrick->suits[i] == HEARTS && newTrick->m_heartsStatus != BROKEN)
 			{
-				printf("HEARTS STATUS BROKEN \n");
+				PrintStrUI(HEARTS_BROKEN);
 				newTrick->m_heartsStatus = BROKEN;
 			}
 			PrintTableCard(turn%VALID_NUM_PLAYERS, newTrick->ranks[i], newTrick->suits[i]);
 			i++;
 			turn++;
 			newTrick->m_turnNum++;
-		}
-		
-		 	
+			sleep(1);
+		}	
 		/* player with highest ranked card "wins" the trick */		
-		curWinner = FindWinner(newTrick->ranks, newTrick->suits, originalPlayer, &heartCnt);
+		curWinner = FindWinner(newTrick->ranks, newTrick->suits, originalPlayer, &heartCnt, newTrick->m_leadingSuit);
 		roundScores[curWinner] = roundScores[curWinner] + heartCnt;
-		
+		PrintScores(roundScores, VALID_NUM_PLAYERS);
 		newTrick->m_turnNum = 0;
 		newTrick->m_trickNumber++;
 		/* loser starts next round */
@@ -449,7 +383,7 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 		i=0;
 	} while(newTrick->m_trickNumber < 13);
 	
-	printf("end---\n");
+	PrintStrUI(END_RND);
 	/* communicate scores back to game */
 	m = (int *)calloc(1,sizeof(roundScores));
 	newTrick->m_penalties = m;
@@ -486,12 +420,13 @@ void SetUpGame(int _nPlayers)
 	int realOrNot[VALID_NUM_PLAYERS];
 /*	srand(time(NULL));*/
 	struct Trick *trick1;
-	if(_nPlayers > 4 || _nPlayers < 1)
+	if(_nPlayers > 4 || _nPlayers < 0)
 	{
-		printf("Invalid # of players for this game. Up to 4 players can play this game.\n");
+		PrintStrUI(ERR_NUM_PLAYERS);
 		return;
 	}
 	bots = VALID_NUM_PLAYERS - _nPlayers;
+	humans = VALID_NUM_PLAYERS - bots;
 	for(b=0; b<bots; b++)
 	{
 		realOrNot[b] = BOT;
@@ -500,23 +435,16 @@ void SetUpGame(int _nPlayers)
 	{
 		realOrNot[p] = HUMAN;
 	}
-	
-	realOrNot[3] = 1;
-	for(p=0; p<(humans+bots); p++)
-	{
-		printf("player: %d", realOrNot[p]);
-	}
 	trick1 = CreateTrick(ZEROTH_TRICK, bots, humans);
 	rnd = 1;
-	printf("***** Round %d ****** \n", rnd);
+	PrintStrUI(START_RND);
 	while(flg != GAME_OVER)
 	{
 		RunARound(trick1, realOrNot);
-/*		printf("trick Score:\n");*/
-		PrintScores(trick1->m_penalties);
+		PrintScores(trick1->m_penalties, VALID_NUM_PLAYERS);
 		flg = UpdateScores(trick1->m_game, trick1->m_penalties, GameStatus);
 		RefillDeck(trick1->m_game);
-/*		sleep(0.2);*/
+		sleep(10);
 	}
 }
 /* END */

@@ -2,19 +2,15 @@
 #include <stdio.h>
 /* malloc for a new cards */
 #include <stdlib.h>
-/* status signals */
+#include "player.h"
+#include "game.h"
+#include "deck.h"
+
 #define GAME_MAGIC_NUM 1266784
 #define NO_WINNER_YET -1
 #define STILL_RUNNING 0
 #define GAME_OVER 100
 #define RUNNING_GAME 1
-
-#include "round.h"
-#include "player.h"
-#include "game.h"
-#include "deck.h"
-#include "card.h"
-
 struct Game
 {
 	struct Team *m_team;
@@ -25,7 +21,6 @@ struct Game
 	int m_whosTheWinner;
 	int m_status;
 	int m_magic;
-	
 };
 
 void RefillDeck(struct Game *_game)
@@ -151,7 +146,7 @@ void PrintBoard(struct Game *_game)
 	nPlayers = _game->m_bots + _game->m_humans;
 	for(score=0; score<nPlayers; score++)
 	{
-		printf("------- PLAYER: %d, SCORE: %d\n", score, _game->m_scores[score]);
+		PrintPlayerAndScore(score, _game->m_scores[score]);
 	}
 }
 
@@ -177,20 +172,19 @@ int UpdateScores(struct Game *_game, int *_updatedScores, int(*GameStatus)(int *
 {
 	int nPlayers, score, minIdx;
 	nPlayers = _game->m_bots + _game->m_humans;
-	printf("------- SCORE BOARD ------ \n");
-/*	PrintBoard(_game);*/
+	PrintStrUI(SCORE_BOARD);
 	for(score=0; score<nPlayers; score++)
 	{
 		_game->m_scores[score] += _updatedScores[score];
-		if(GameStatus(_game->m_scores) == GAME_OVER)
-		{
-			printf("GAME FINAL RESULTS:\n");
-			PrintBoard(_game);
-			minIdx = GetWinner(_game);
-			printf("\nThe winner is Player #%d\n", minIdx);
-			DestroyGame(_game);
-			return GAME_OVER;
-		}
+	}
+	if(GameStatus(_game->m_scores) == GAME_OVER)
+	{
+		PrintStrUI(GAME_RESULTS);
+		PrintBoard(_game);
+		minIdx = GetWinner(_game);
+		PrintValueUI(WINNER_IS, minIdx);
+		DestroyGame(_game);
+		return GAME_OVER;
 	}
 	return RUNNING_GAME;
 }

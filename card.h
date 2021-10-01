@@ -1,6 +1,8 @@
 #ifndef __CARDS_H__
 #define __CARDS_H__
 #include "CardSpecs.h"
+#include "SpecialChars.h"
+
 
 /*
 	desc: create a new card with suit and rank.
@@ -18,7 +20,6 @@ int GetRank(struct Card *_card);
 int GetSuit(struct Card *_card);
 void SwapCards(struct Card *_card1, struct Card *_card2);
 void DestroyCard(struct Card *_card);
-
 void PrintCard(struct Card *_card);
 
 # endif /* __CARDS_H__ */

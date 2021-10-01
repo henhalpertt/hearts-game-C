@@ -2,8 +2,8 @@
 
 TARGET= t.out
 CC= gcc
-CFLAGS= -ansi -g -pedantic
-OBJS= card.o deck.o player.o game.o round.o main.o
+CFLAGS= -ansi -pedantic
+OBJS= card.o deck.o player.o game.o round.o main.o UI.o
 
 $(TARGET): $(OBJS)
 	$(CC) -o $(TARGET) $(OBJS)
@@ -26,8 +26,8 @@ game.o: game.c game.h
 round.o: round.c round.h player.h
 	$(CC) $(CFLAGS) -c round.c
 	
-#ui.o: ui.c ui.h
-#	$(CC) $(CFLAGS) -c ui.c
+UI.o: UI.c UI.h
+	$(CC) $(CFLAGS) -c UI.c
 	
 clean:
 	rm -f $(TARGET) $(OBJS)

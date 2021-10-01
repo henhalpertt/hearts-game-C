@@ -3,7 +3,7 @@
 /* malloc for a new cards */
 #include <stdlib.h>
 #include "card.h"
-#include "SpecialChars.h"
+#include "UI.h"
 #define SUIT_AVAILABLE 1
 #define SUIT_NOT_FOUND 0
 #define LIMIT 13
@@ -34,7 +34,7 @@ struct Player
 	int m_magic;
 };
 
-/* players as a whole --> Team */
+/* n players --> Team */
 struct Team
 {
 	struct Player **m_players;
@@ -89,27 +89,26 @@ void PrintCards(struct Team *_team)
 	int card, player;
 	for(player=0; player<4; player++)
 	{
-		printf("ID: %d \n", _team->m_players[player]->m_id);
+		PrintIdUI(_team->m_players[player]->m_id);
 		for(card=0; card<(_team->m_players[player]->m_nCardsInHand); card++)
 		{
-			PrintCard(_team->m_players[player]->m_cards[card]);
-			printf("\n");
+			PrintCardUI(_team->m_players[player]->m_cards[card]);
+			PrintStrUI(NEWLINE);
 		}
-		printf("\n");
+		PrintStrUI(NEWLINE);
 	}
 }
 
 void PrintCardsHand(struct Team *_team, int _playerId)
 {
 	int card;
-	printf("ID: %d \n", _team->m_players[_playerId]->m_id);
+	PrintIdUI(_playerId);
 	for(card=0; card<(_team->m_players[_playerId]->m_nCardsInHand); card++)
 	{
-		printf("%s%d.",BOLD_ON, card);
-		PrintCard(_team->m_players[_playerId]->m_cards[card]);
-
+		PrintCardIdxUI(card);
+		PrintCardUI(_team->m_players[_playerId]->m_cards[card]);
 	}
-	printf("\n");
+	PrintStrUI(NEWLINE);
 }
 
 static int FindMinInSubset(struct Player *_player, int _idx)
@@ -313,7 +312,6 @@ int CheckSuitInHand(struct Team *_team, int _playerID, int _leadSuit, int *resul
 	return SUIT_AVAILABLE;
 }
 
-
 void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _leadRank, int *idx, int status)
 {
 	int size, tmp=0, card;
@@ -365,8 +363,6 @@ void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _lead
 	}
 }
 
-
-
 struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card **_cards)
 {
 	struct Player **newPlayers;
@@ -376,16 +372,11 @@ struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card *
 	{
 		return NULL;
 	}
-	
-/*	newTeam = (struct Team*)malloc(sizeof(struct Team));*/
 	newTeam = (struct Team*)calloc(1, sizeof(struct Team));
 	if(newTeam == NULL)
 	{
 		return NULL;
 	}
-	
-/*	sizeOfPlayers = sizeof(struct Player) * (_nBots + _nHumans);*/
-/*	newPlayers = (struct Player**)malloc(sizeOfPlayers);*/
 	newPlayers = (struct Player**)calloc(_nBots + _nHumans, sizeof(struct Player));
 	if(newPlayers == NULL)
 	{
@@ -414,80 +405,6 @@ void DestroyTeam(struct Team *_team)
 	}
 	free(_team);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*static void MakeBotPlayers(struct Team *_newTeam, int _nBots, int _nCards)*/
-/*{*/
-/*	int bot, from;*/
-/*	if(_nBots == 0)*/
-/*	{*/
-/*		return;*/
-/*	}*/
-/*	from = _newTeam->m_totalPlayers;*/
-/*	for(player=0, from=0; player<_nHumans; player++, from+=13)*/
-/*	{*/
-/*		_newTeam->m_players[bot] = CreatePlayers(bot+1, BOT_PLAYER, int _nCards);*/
-/*		_newTeam->m_totalPlayers++;*/
-/*	}*/
-/*}*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /* END */

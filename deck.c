@@ -4,7 +4,6 @@
 #include <stdlib.h>
 /* extract card struct + its functions + error signals + card specs */
 #include "deck.h"
-
 #define DECK_MAGIC_NUM 19931201
 
 static void FillTheDeck(struct Deck *_deck, int _nCards)
