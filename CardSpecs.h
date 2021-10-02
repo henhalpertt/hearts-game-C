@@ -1,5 +1,3 @@
-#define NUM_CARDS 52
-
 typedef enum Suit
 {
 	HEARTS = 1,

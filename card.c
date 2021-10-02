@@ -11,7 +11,9 @@ struct Card
 	int m_magic;
 };
 
-struct Card * CreateCard(Suit cardSuit, Rank cardRank)
+size_t sizeOfCard = sizeof(struct Card);
+
+struct Card * CreateCard(Suit _cardSuit, Rank _cardRank)
 {
 	struct Card *newCard;
 	newCard = (struct Card*)malloc(sizeof(struct Card));
@@ -19,8 +21,8 @@ struct Card * CreateCard(Suit cardSuit, Rank cardRank)
 	{
 		return NULL;
 	}
-	newCard->m_suit = cardSuit;
-	newCard->m_rank = cardRank;
+	newCard->m_suit = _cardSuit;
+	newCard->m_rank = _cardRank;
 	newCard->m_magic = CARD_MAGIC_NUM;
 	return newCard;
 }
@@ -43,45 +45,14 @@ void SwapCards(struct Card *_card1, struct Card *_card2)
 	*_card2 = tmp;
 }
 
-int GetRank(struct Card *_card)
+Rank GetRank(struct Card *_card)
 {
 	return _card->m_rank;
 }
 
-int GetSuit(struct Card *_card)
+Suit GetSuit(struct Card *_card)
 {
 	return _card->m_suit;
 }
 
-/*void PrintCard(struct Card *_card)*/
-/*{*/
-/*	if(_card->m_suit == HEARTS)*/
-/*	{*/
-/*		printf("%s%s%d%s ", BOLD_ON, RED, _card->m_rank, HEART);*/
-/*		printf(" ");*/
-/*		printf("%s", WHITE);*/
-/*		return;*/
-/*	}*/
-/*	if(_card->m_suit == SPADES)*/
-/*	{*/
-/*		printf("%s%s%d%s ", BOLD_ON, YELLOW, _card->m_rank, SPADE);*/
-/*		printf(" ");*/
-/*		printf("%s", WHITE);*/
-/*		return;*/
-/*	}*/
-/*	if(_card->m_suit == CLUBS)*/
-/*	{*/
-/*		printf("%s%s%d %s ", BOLD_ON, BLUE, _card->m_rank, CLUB);*/
-/*		printf(" ");*/
-/*		printf("%s", WHITE);*/
-/*		return;*/
-/*	}*/
-/*	if(_card->m_suit == DIAMONDS)*/
-/*	{*/
-/*		printf("%s%s%d %s ", BOLD_ON, CYAN, _card->m_rank, DIAMOND);*/
-/*		printf(" ");*/
-/*		printf("%s", WHITE);*/
-/*		return;*/
-/*	}*/
-/*}*/
 

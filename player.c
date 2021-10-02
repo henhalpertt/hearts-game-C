@@ -34,7 +34,6 @@ struct Player
 	int m_magic;
 };
 
-/* n players --> Team */
 struct Team
 {
 	struct Player **m_players;
@@ -42,6 +41,7 @@ struct Team
 	int m_magic;
 };
 
+/* ---- HELPER FUNCTIONS ---- */ 
 static struct Player * CreatePlayer(int _id, int _from, int _nCards, struct Card **_cards)
 {
 	struct Player *newplayer;
@@ -84,33 +84,6 @@ static void MakePlayers(struct Team *_newTeam, int _nPlayers, int _nCards, struc
 	}
 }
 
-void PrintCards(struct Team *_team)
-{
-	int card, player;
-	for(player=0; player<4; player++)
-	{
-		PrintIdUI(_team->m_players[player]->m_id);
-		for(card=0; card<(_team->m_players[player]->m_nCardsInHand); card++)
-		{
-			PrintCardUI(_team->m_players[player]->m_cards[card]);
-			PrintStrUI(NEWLINE);
-		}
-		PrintStrUI(NEWLINE);
-	}
-}
-
-void PrintCardsHand(struct Team *_team, int _playerId)
-{
-	int card;
-	PrintIdUI(_playerId);
-	for(card=0; card<(_team->m_players[_playerId]->m_nCardsInHand); card++)
-	{
-		PrintCardIdxUI(card);
-		PrintCardUI(_team->m_players[_playerId]->m_cards[card]);
-	}
-	PrintStrUI(NEWLINE);
-}
-
 static int FindMinInSubset(struct Player *_player, int _idx)
 {
 	int tmp, suitItem, rankItem, item;
@@ -151,6 +124,21 @@ static int FindMinInSubsetByRank(struct Player *_player, int _idx)
 	return minIdx;
 }
 
+static void SortEachHand(struct Player *_player)
+{
+	int card, minIdx;
+	int item;
+	
+	/* for every card in hand  */
+	for(card=0; card<_player->m_nCardsInHand-1; card++)
+	{
+		/* selection sort */
+		minIdx = FindMinInSubset(_player, card);
+		SwapCards(_player->m_cards[minIdx], _player->m_cards[card]);
+	}
+}
+
+/* ---- API Functions ---- */
 void SortEachHandByRank(struct Player *_player)
 {
 	int card, minIdx;
@@ -165,19 +153,7 @@ void SortEachHandByRank(struct Player *_player)
 	}
 }
 
-static void SortEachHand(struct Player *_player)
-{
-	int card, minIdx;
-	int item;
-	
-	/* for every card in hand  */
-	for(card=0; card<_player->m_nCardsInHand-1; card++)
-	{
-		/* selection sort */
-		minIdx = FindMinInSubset(_player, card);
-		SwapCards(_player->m_cards[minIdx], _player->m_cards[card]);
-	}
-}
+
 
 void SortCards(struct Team *_team)
 {
@@ -368,10 +344,6 @@ struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card *
 	struct Player **newPlayers;
 	struct Team *newTeam;
 	int sizeOfPlayers;
-	if(_nHumans == 0 && _nBots == 0)
-	{
-		return NULL;
-	}
 	newTeam = (struct Team*)calloc(1, sizeof(struct Team));
 	if(newTeam == NULL)
 	{
@@ -386,8 +358,6 @@ struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card *
 	newTeam->m_totalPlayers = _nHumans + _nBots;
 	newTeam->m_magic = TEAM_MAGIC_NUM;
 	MakePlayers(newTeam, newTeam->m_totalPlayers, _nCards, _cards);
-	
-/*	MakeBotPlayers(newTeam, _nBots, _nCards);*/
 	return newTeam;
 }
 
@@ -406,6 +376,34 @@ void DestroyTeam(struct Team *_team)
 	free(_team);
 }
 
+/* ---  PRINTS --- */
+
+void PrintCards(struct Team *_team)
+{
+	int card, player;
+	for(player=0; player<4; player++)
+	{
+		PrintIdUI(_team->m_players[player]->m_id);
+		for(card=0; card<(_team->m_players[player]->m_nCardsInHand); card++)
+		{
+			PrintCardUI(_team->m_players[player]->m_cards[card]);
+			PrintStrUI(NEWLINE);
+		}
+		PrintStrUI(NEWLINE);
+	}
+}
+
+void PrintCardsHand(struct Team *_team, int _playerId)
+{
+	int card;
+	PrintIdUI(_playerId);
+	for(card=0; card<(_team->m_players[_playerId]->m_nCardsInHand); card++)
+	{
+		PrintCardIdxUI(card);
+		PrintCardUI(_team->m_players[_playerId]->m_cards[card]);
+	}
+	PrintStrUI(NEWLINE);
+}
 
 /* END */
 

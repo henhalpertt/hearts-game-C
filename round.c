@@ -5,11 +5,10 @@
 /* delay for some parts of the game */
 #include <time.h>
 #define TRICK_MAGIC_NUM 1435654
-
+/* constans regarding hearts game such as #of cards for this game, #of cards for each player etc.. */
 #include "PolicySignals.h"
-#include "SpecialChars.h"
+
 #include "game.h"
-#include "round.h"
 #include "deck.h"
 
 struct Trick
@@ -55,7 +54,6 @@ struct Deck * GetDeckForHearts(int _nCards)
 {
 	struct Deck *newDeck;
 	newDeck = CreateDeck(_nCards);
-	ShuffleTheDeck(newDeck, _nCards);
 	return newDeck;
 }
 
@@ -83,22 +81,54 @@ void GiveCards(struct Game *_game, int _playerId, int rank, int suit)
 	GiveCardsToGame(_game, _playerId, rank, suit);
 }
 
-static void ExchangeCardsCW(struct Game *_game)
+static void ExchangeCardsCW(struct Game *_game, int *_botOrHuman)
 {
 	int suits[BANK_SIZE], ranks[BANK_SIZE], card1[2];
 	int player, cardCnt, bankCnt;
 	int rank, suit;
+	int humanInput=0;
+	int flg;
+	int playerIdx;
 	
 	bankCnt = 0;			
 /*	select 3 highest ranked cards from each player (last three cards in array) and store in bank */
 	for(player=0; player<VALID_NUM_PLAYERS; player++)
 	{
-		for(cardCnt = CARDS_EACH_HAND-1; cardCnt>=10; cardCnt--)
+		if(_botOrHuman[player] == BOT)
 		{
-			GetCard(_game, player, card1, PolicyGetCard, cardCnt);
-			suits[bankCnt] = card1[0];
-			ranks[bankCnt] = card1[1];
-			bankCnt++;
+			for(cardCnt = CARDS_EACH_HAND-1; cardCnt>=10; cardCnt--)
+			{
+				GetCard(_game, player, card1, PolicyGetCard, cardCnt);
+				suits[bankCnt] = card1[0];
+				ranks[bankCnt] = card1[1];
+				bankCnt++;
+			}
+		}
+		else
+		{
+			PrintStrUI(PASS_THREE_CARDS);
+			SortHands(_game);
+			flg=0;
+			while(flg  != 3)
+			{
+				PrintStrUI(YOUR_CARDS);
+				PrintHand(_game, player);
+				PrintStrUI(ENTER_CARDIDX);
+				UserInput(&playerIdx);
+				if(playerIdx < 0 || playerIdx > 12 )
+				{
+					PrintStrUI(IDX_BOUNDS);	
+				}
+				else
+				{
+					GetCard(_game, player, card1, PolicyGetCard, playerIdx);
+					suits[bankCnt] = card1[0];
+					ranks[bankCnt] = card1[1];
+					bankCnt++;
+					flg++;	
+				}
+			}
+			SortHandsByRank(_game);	
 		}
 	}
 /*	 Exchange 3 Cards among players */
@@ -151,11 +181,11 @@ void FindImportantCards(struct Trick *_trick)
 	_trick->m_playerWSpadesQueen = playerID;
 }
 
-PassThreeCards(struct Game *_game)
+PassThreeCards(struct Game *_game, int *_botOrHuman)
 {
 	int player, cardCnt;
 	SortHandsByRank(_game);	
-	ExchangeCardsCW(_game);
+	ExchangeCardsCW(_game, _botOrHuman);
 	SortHands(_game);
 }
 
@@ -196,7 +226,7 @@ void CallPlayerOne(struct Trick *_trick , int *_card, int _turn)
 /*		scanf("%d", &playerIdx);*/
 		SeeCardGame(_trick->m_game, _turn, _card, playerIdx);
 		/* check if idx is valid */
-		if(playerIdx < 0 || playerIdx > 12 - _trick->m_trickNumber)
+		if(playerIdx < 0 || playerIdx > 12 - _trick->m_trickNumber )
 		{
 			PrintStrUI(IDX_BOUNDS);
 		}
@@ -293,7 +323,7 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 	int result, tmpIdx;
 	int *m;
 	int score;
-	PassThreeCards(newTrick->m_game);
+	PassThreeCards(newTrick->m_game, _botOrHuman);
 	FindImportantCards(newTrick);
 	turn = newTrick->m_playerWClubsTwo;
 	newTrick->m_leadingSuit = CLUBS;

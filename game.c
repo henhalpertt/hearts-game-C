@@ -2,15 +2,21 @@
 #include <stdio.h>
 /* malloc for a new cards */
 #include <stdlib.h>
-#include "player.h"
+
 #include "game.h"
+#include "player.h"
 #include "deck.h"
+#include "card.h"
 
 #define GAME_MAGIC_NUM 1266784
 #define NO_WINNER_YET -1
+#define ERR_NULL_SCORES -2
+
 #define STILL_RUNNING 0
-#define GAME_OVER 100
 #define RUNNING_GAME 1
+#define GAME_OVER 100
+
+
 struct Game
 {
 	struct Team *m_team;
@@ -34,7 +40,7 @@ void RefillDeck(struct Game *_game)
 	
 	nCardsInHand = nCards / (_game->m_bots + _game->m_humans);
 	DestroyTeam(_game->m_team); 
-	newTeam = CreatePlayers(_game->m_bots, _game->m_humans, nCardsInHand, newDeck->m_cards);
+	newTeam = CreatePlayers(_game->m_bots, _game->m_humans, nCardsInHand, GetCards(newDeck));
 	_game->m_team = newTeam;
 	
 }
@@ -69,7 +75,7 @@ struct Game * CreateGame(int _nBots, int _nHumans) /* called in main.c */
 	
 	/*create players */
 	nCardsInHand = nCards / (_nBots + _nHumans);
-	newTeam = CreatePlayers(_nBots, _nHumans, nCardsInHand, newDeck->m_cards); 
+	newTeam = CreatePlayers(_nBots, _nHumans, nCardsInHand, GetCards(newDeck)); 
 	
 	newGame->m_team = newTeam;
 	newGame->m_whosTheWinner = NO_WINNER_YET;
@@ -171,6 +177,10 @@ int GetWinner(struct Game *_game)
 int UpdateScores(struct Game *_game, int *_updatedScores, int(*GameStatus)(int *))
 {
 	int nPlayers, score, minIdx;
+	if(_updatedScores == NULL)
+	{
+		return ERR_NULL_SCORES;
+	}
 	nPlayers = _game->m_bots + _game->m_humans;
 	PrintStrUI(SCORE_BOARD);
 	for(score=0; score<nPlayers; score++)

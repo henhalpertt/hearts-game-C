@@ -1,10 +1,26 @@
+
 /* possible NULL pointers */
 #include <stdio.h>
 /* malloc for a new cards */
 #include <stdlib.h>
 /* extract card struct + its functions + error signals + card specs */
-#include "deck.h"
+#include "card.h"
+/*#include "deck.h"*/
+/*#include "deck.h"*/
 #define DECK_MAGIC_NUM 19931201
+
+struct Deck
+{
+	struct Card **m_cards;
+	int m_nCards;
+	int m_magic;
+};
+
+
+struct Card **GetCards(struct Deck *_deck)
+{
+	return _deck->m_cards;
+}
 
 static void FillTheDeck(struct Deck *_deck, int _nCards)
 {
@@ -24,15 +40,7 @@ static void FillTheDeck(struct Deck *_deck, int _nCards)
 	}
 }
 
-static void SwapCards(struct Card *_card1, struct Card *_card2)
-{
-	struct Card tmp;
-	tmp = *_card1;
-	*_card1 = *_card2;
-	*_card2 = tmp;
-}
-
-void ShuffleTheDeck(struct Deck *_deck, int _nCards)
+static void ShuffleTheDeck(struct Deck *_deck, int _nCards)
 {
 	size_t i, j;
 	size_t suit, rank, cardCnt;
@@ -49,16 +57,12 @@ struct Deck * CreateDeck(size_t _nCards)
 	struct Card **newCards;
 	int sizeOfCards;
 	
-/*	newDeck = (struct Deck*)malloc(sizeof(struct Deck));*/
 	newDeck = (struct Deck*)calloc(1, sizeof(struct Deck));
 	if(newDeck == NULL)
 	{
 		return NULL;
 	}
-	
-/*	sizeOfCards = sizeof(struct Card) * _nCards;*/
-/*	newCards = (struct Card**)malloc(sizeOfCards);*/
-	newCards = (struct Card**)calloc(_nCards, sizeof(struct Card));
+	newCards = (struct Card**)calloc(_nCards, sizeOfCard);
 	if(newCards == NULL)
 	{
 		return NULL;
