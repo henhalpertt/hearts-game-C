@@ -271,6 +271,7 @@ void CallPlayer(struct Trick *_trick , int *_card, int _turn, int _leadSuit)
 					if(_trick->m_heartsStatus != BROKEN)
 					{
 						_trick->m_heartsStatus = BROKEN;
+						printf("----->2\n");
 						PrintStrUI(HEARTS_BROKEN);
 					}
 				}
@@ -332,6 +333,7 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 	i=0;
 	do
 	{
+		SortHands(newTrick->m_game);
 		PrintValueUI(TRICK_NUM, newTrick->m_trickNumber);
 		originalPlayer = turn;
 		if(newTrick->m_turnNum == 0)
@@ -352,6 +354,12 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 					if(card[1] == QUEEN && card[0] == SPADES && tmpIdx-1 >=  0)
 					{
 						tmpIdx = tmpIdx-1;
+						SeeCardGame(newTrick->m_game, turn%VALID_NUM_PLAYERS, card, tmpIdx);
+						if(card[0] == HEARTS && newTrick->m_heartsStatus != BROKEN)
+						{
+						/* special case where I only have queen of spades, rest are hearts, but hearts status unbroken*/
+							tmpIdx += 1;
+						}
 					}
 					GetCard(newTrick->m_game, turn%VALID_NUM_PLAYERS, card, PolicyGetCard, tmpIdx);
 				}
@@ -366,6 +374,7 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 			/* check hearts status */
 			if(newTrick->suits[i] == HEARTS && newTrick->m_heartsStatus != BROKEN)
 			{
+				printf("----->3\n");
 				PrintStrUI(HEARTS_BROKEN);
 				newTrick->m_heartsStatus = BROKEN;
 			}
@@ -391,6 +400,7 @@ void RunARound(struct Trick *newTrick, int *_botOrHuman)
 			newTrick->ranks[i] = card[1];
 			if(newTrick->suits[i] == HEARTS && newTrick->m_heartsStatus != BROKEN)
 			{
+				printf("----->1\n");
 				PrintStrUI(HEARTS_BROKEN);
 				newTrick->m_heartsStatus = BROKEN;
 			}
