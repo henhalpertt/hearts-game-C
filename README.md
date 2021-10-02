@@ -39,6 +39,6 @@ You cannot lead a trick with hearts, until hearts has been broken (played on ano
 So if it is your turn to lead and no heart has been played yet then you may not select a heart as the card to play first.<br>
 In some variations of the game you can't play the queen of spades until hearts has been broken as well,<br>
 but in this version you can always play the queen of spades and she doesn't break hearts.<br>
-<img src = "hearts2.png" width="600" height="400" >
+<img src = "hearts3.png" width="600" height="400" >
 
 Rules taken from: https://cardgames.io/hearts/#about 
