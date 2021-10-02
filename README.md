@@ -17,7 +17,7 @@ round.c - Create/ Destroy a Trick. all trick operations are performed in this mo
 ## Input Directions:<br><br>
 
 In order to run the game, please use the makefile.<br>
-One must enter a valid number of players. the number enteres will be the number of real players. the rest of the players will play as bots.<br>
+One must enter a valid number of players. the number entered will be the number of real players. the rest of the players will play as bots.<br>
 Maximum # of players: 4 (no bots),<br>
 Minimum # of players: 0 (4 bots playing against each other).<br>
 
