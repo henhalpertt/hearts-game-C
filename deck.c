@@ -1,12 +1,9 @@
-
 /* possible NULL pointers */
 #include <stdio.h>
 /* malloc for a new cards */
 #include <stdlib.h>
-/* extract card struct + its functions + error signals + card specs */
+/* USing card functions */
 #include "card.h"
-/*#include "deck.h"*/
-/*#include "deck.h"*/
 #define DECK_MAGIC_NUM 19931201
 
 struct Deck

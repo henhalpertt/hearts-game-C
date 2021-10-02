@@ -39,9 +39,9 @@
 #define HEART_SUIT_ERR "Cant Put a card from suit of hearts, choose a different suit.\n"
 #define YOUR_CARDS "Your Cards: "
 #define END_RND "\nEnd Of Round\n"
-#define PASS_THREE_CARDS "\nBefore We Begin, Please Pass Three Cards from you hand\n"
-
-
+#define PASS_THREE_CARDS "\nBefore We Begin, Please Pass Three Cards from your hand\n"
+#define TITLE "\n\n\t\t\t\t     Hearts Game\n\n"
+#define ENTER_NUM_PLAYERS "\n\n\t\t\t Welcome, How Many Players Are Playing?\n"
 
 
 

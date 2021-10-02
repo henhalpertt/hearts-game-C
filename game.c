@@ -11,11 +11,9 @@
 #define GAME_MAGIC_NUM 1266784
 #define NO_WINNER_YET -1
 #define ERR_NULL_SCORES -2
-
 #define STILL_RUNNING 0
 #define RUNNING_GAME 1
 #define GAME_OVER 100
-
 
 struct Game
 {

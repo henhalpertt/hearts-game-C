@@ -2,8 +2,8 @@
 /* malloc for a new cards */
 #include <stdlib.h>
 #define CARD_MAGIC_NUM 19931302
+/* including some card specs */
 #include "card.h"
-#include "UI.h"
 struct Card
 {
 	Rank m_suit;

@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include "card.h"
 #include "UI.h"
+#define PLAYER_MAGIC_NUM 19931245
+#define TEAM_MAGIC_NUM 19931314
+
 #define SUIT_AVAILABLE 1
 #define SUIT_NOT_FOUND 0
 #define LIMIT 13
@@ -12,8 +15,6 @@
 
 enum PlayerSpecs
 {
-	PLAYER_MAGIC_NUM = 19931245,
-	TEAM_MAGIC_NUM = 19931314,
 	LOSER = 0,
 	IN_THE_GAME = 1,
 	OUT_OF_GAME = 0,
