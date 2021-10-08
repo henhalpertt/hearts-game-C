@@ -9,7 +9,7 @@
 struct Deck
 {
 	struct Card **m_cards;
-	int m_nCards;
+	size_t m_nCards;
 	int m_magic;
 };
 
@@ -19,9 +19,9 @@ struct Card **GetCards(struct Deck *_deck)
 	return _deck->m_cards;
 }
 
-static void FillTheDeck(struct Deck *_deck, int _nCards)
+static void FillTheDeck(struct Deck *_deck, size_t _nCards)
 {
-	int cardCnt;
+	size_t cardCnt;
 	Rank rank;
 	Suit suit;
 	
@@ -37,7 +37,7 @@ static void FillTheDeck(struct Deck *_deck, int _nCards)
 	}
 }
 
-static void ShuffleTheDeck(struct Deck *_deck, int _nCards)
+static void ShuffleTheDeck(struct Deck *_deck, size_t _nCards)
 {
 	size_t i, j;
 	size_t suit, rank, cardCnt;
@@ -52,7 +52,6 @@ struct Deck * CreateDeck(size_t _nCards)
 {
 	struct Deck *newDeck;
 	struct Card **newCards;
-	int sizeOfCards;
 	
 	newDeck = (struct Deck*)calloc(1, sizeof(struct Deck));
 	if(newDeck == NULL)
@@ -70,13 +69,12 @@ struct Deck * CreateDeck(size_t _nCards)
 	
 	FillTheDeck(newDeck, _nCards);
 	ShuffleTheDeck(newDeck, _nCards);
-
 	return newDeck;
 }	
 
 void DestroyDeck(struct Deck *_deck)
 {
-	int i;
+	size_t i;
 
 	if(_deck == NULL || _deck->m_magic != DECK_MAGIC_NUM)
 	{

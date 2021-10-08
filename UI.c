@@ -113,9 +113,10 @@ void PrintTableCard(int _player, int _rank, int _suit)
 	}
 }
 
-void UserInput(int *_in)
+void UserInput(size_t *_in)
 {
-	scanf("%d", _in);
+	/* add atoi */
+	scanf("%zu", _in);
 }
 
 

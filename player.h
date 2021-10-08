@@ -55,7 +55,7 @@ void SortCardsByRank(struct Team *_team);
 	error handling:
 		
 */
-void PlayerGiveCard(struct Team *_team, int _playerId, int *card, int(*PolicyGetCard)(int), int _cardIdx);
+void PlayerGiveCard(struct Team *_team, size_t _playerId, int *card, size_t(*PolicyGetCard)(size_t _idx), size_t _idx);
 
 /*
 	desc: Retrieve the suit and rank of specific card at some index _idx, store it at address where *card points to.
@@ -69,7 +69,7 @@ void PlayerGiveCard(struct Team *_team, int _playerId, int *card, int(*PolicyGet
 	error handling:
 		
 */
-void PlayerSeeCard(struct Team *_team, int _playerId, int *card, int _idx);
+void PlayerSeeCard(struct Team *_team, size_t _playerId, int *card, size_t _idx);
 
 /*
 	desc: Give a card to a player. this will increase the number of cards in player. 
@@ -82,7 +82,7 @@ void PlayerSeeCard(struct Team *_team, int _playerId, int *card, int _idx);
 	error handling:
 		
 */
-void GiveCardsToPlayer(struct Team *_team, int _playerId, int rank, int suit);
+void GiveCardsToPlayer(struct Team *_team, size_t _playerId, Rank rank, Suit suit);
 
 /*
 	desc: Find Player ID, store ID at address where *playerID points to. 
@@ -95,7 +95,7 @@ void GiveCardsToPlayer(struct Team *_team, int _playerId, int rank, int suit);
 	error handling:
 		
 */
-void FindPlayer(struct Team *_team, int _rank, int _suit, int *playerID);
+void FindPlayer(struct Team *_team, Rank _rank, Suit _suit, size_t *playerID);
 
 /*
 	desc: Find index of specific card given  a _rank and a _suit. stores index at address where *idx points to.   
@@ -108,7 +108,7 @@ void FindPlayer(struct Team *_team, int _rank, int _suit, int *playerID);
 	error handling:
 		
 */
-void FindIdx(struct Team *_team, int _rank, int _suit, int *idx, int _player);
+void FindIdx(struct Team *_team, Rank _rank, Suit _suit, size_t *idx, size_t _player);
 
 /*
 	desc: Find the ideal card to give to round.c according to status of round and given rank of card.
@@ -123,7 +123,7 @@ void FindIdx(struct Team *_team, int _rank, int _suit, int *idx, int _player);
 	error handling:
 		
 */
-void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _leadRank, int *idx, int _status);
+void FindBestCardIdx(struct Team *_team, size_t _playerID, Suit _leadSuit, Rank _leadRank, size_t *idx, int _status);
 
 /*
 	desc: Given a player ID, check if that player holds cards from some specific suit, _leadSuit. 
@@ -150,6 +150,6 @@ void DestroyTeam(struct Team *_team);
 /* print cards of the whole team (n players, where n = 1,2..,n) */
 void PrintCards(struct Team *_team);
 /* print cards of 1 player */ 
-void PrintCardsHand(struct Team *_team, int _playerId);
+void PrintCardsHand(struct Team *_team, size_t _playerId);
 
 #endif /* __PLAYER_H__ */

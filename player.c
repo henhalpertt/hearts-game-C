@@ -25,12 +25,12 @@ enum PlayerSpecs
 struct Player
 {
 	struct Card **m_cards; 
-	int m_nCardsInHand;
-	int m_id; /* player id [ 1 upto nth players, according to some policy(in our case, 4 players)] */
+	size_t m_nCardsInHand;
+	size_t m_id; /* player id [ 1 upto nth players, according to some policy(in our case, 4 players)] */
 	int m_realOrNot; /* bot or human */
 	int m_inOrOutOfTheGame; /* other games night continue, 
 								exluding some players */
-	int m_winner; /* all of them are losers at first, flg will change 
+	size_t m_winner; /* all of them are losers at first, flg will change 
 					once game is over only to one of the players */
 	int m_magic;
 };
@@ -38,15 +38,15 @@ struct Player
 struct Team
 {
 	struct Player **m_players;
-	int m_totalPlayers;
+	size_t m_totalPlayers;
 	int m_magic;
 };
 
 /* ---- HELPER FUNCTIONS ---- */ 
-static struct Player * CreatePlayer(int _id, int _from, int _nCards, struct Card **_cards)
+static struct Player * CreatePlayer(size_t _id, size_t _from, size_t _nCards, struct Card **_cards)
 {
 	struct Player *newplayer;
-	int card;
+	size_t card;
 	Rank rank;
 	Suit suit;
 	
@@ -72,9 +72,9 @@ static struct Player * CreatePlayer(int _id, int _from, int _nCards, struct Card
 	return newplayer;
 }
 
-static void MakePlayers(struct Team *_newTeam, int _nPlayers, int _nCards, struct Card **_cards)
+static void MakePlayers(struct Team *_newTeam, size_t _nPlayers, size_t _nCards, struct Card **_cards)
 {
-	int player, from;
+	size_t player, from;
 	if(_nPlayers == 0)
 	{
 		return;
@@ -85,12 +85,12 @@ static void MakePlayers(struct Team *_newTeam, int _nPlayers, int _nCards, struc
 	}
 }
 
-static int FindMinInSubset(struct Player *_player, int _idx)
-{
+static size_t FindMinInSubset(struct Player *_player, size_t _idx)
+{	
 	int tmp, suitItem, rankItem, item;
-	int minIdx=_idx;
+	size_t minIdx;
 	
-	
+	minIdx=_idx;
 	tmp = 100 * GetSuit(_player->m_cards[_idx]) + GetRank(_player->m_cards[_idx]);
 	for(;_idx<_player->m_nCardsInHand; _idx++)
 	{
@@ -107,10 +107,10 @@ static int FindMinInSubset(struct Player *_player, int _idx)
 	return minIdx;
 }
 
-static int FindMinInSubsetByRank(struct Player *_player, int _idx)
+static size_t FindMinInSubsetByRank(struct Player *_player, size_t _idx)
 {
 	int tmp, rankItem;
-	int minIdx=_idx;
+	size_t minIdx=_idx;
 	
 	tmp = GetRank(_player->m_cards[_idx]);
 	for(;_idx<_player->m_nCardsInHand; _idx++)
@@ -127,7 +127,7 @@ static int FindMinInSubsetByRank(struct Player *_player, int _idx)
 
 static void SortEachHand(struct Player *_player)
 {
-	int card, minIdx;
+	size_t card, minIdx;
 	int item;
 	
 	/* for every card in hand  */
@@ -142,7 +142,7 @@ static void SortEachHand(struct Player *_player)
 /* ---- API Functions ---- */
 void SortEachHandByRank(struct Player *_player)
 {
-	int card, minIdx;
+	size_t card, minIdx;
 	int item;
 	
 	/* for every card in hand  */
@@ -154,11 +154,9 @@ void SortEachHandByRank(struct Player *_player)
 	}
 }
 
-
-
 void SortCards(struct Team *_team)
 {
-	int player;
+	size_t player;
 	for(player=0; player<_team->m_totalPlayers; player++)
 	{
 		SortEachHand(_team->m_players[player]);
@@ -167,55 +165,48 @@ void SortCards(struct Team *_team)
 
 void SortCardsByRank(struct Team *_team)
 {
-	int player;	
+	size_t player;	
 	for(player=0; player<_team->m_totalPlayers; player++)
 	{
 		SortEachHandByRank(_team->m_players[player]);
 	}
 }
 
-void PlayerGiveCard(struct Team *_team, int _playerId, int *card, int(*PolicyGetCard)(int _idx), int _idx)
+void PlayerGiveCard(struct Team *_team, size_t _playerId, int *card, size_t(*PolicyGetCard)(size_t _idx), size_t _idx)
 {
-	int _cardIdx;
-	int i;
-	_cardIdx = PolicyGetCard(_idx);
-	if(_cardIdx > LIMIT || _cardIdx < 0)
-	{
-		return;
-	}
-	card[0] = GetSuit(_team->m_players[_playerId]->m_cards[_cardIdx]);
-	card[1] = GetRank(_team->m_players[_playerId]->m_cards[_cardIdx]);
-	for(i = _cardIdx; i<(_team->m_players[_playerId]->m_nCardsInHand-1); i++)
+	size_t cardIdx;
+	size_t i;
+	cardIdx = PolicyGetCard(_idx);
+	card[0] = GetSuit(_team->m_players[_playerId]->m_cards[cardIdx]);
+	card[1] = GetRank(_team->m_players[_playerId]->m_cards[cardIdx]);
+	for(i = cardIdx; i<(_team->m_players[_playerId]->m_nCardsInHand-1); i++)
 	{
 		_team->m_players[_playerId]->m_cards[i] = _team->m_players[_playerId]->m_cards[i+1];
 	}
 	_team->m_players[_playerId]->m_nCardsInHand--;
 }
 
-void PlayerSeeCard(struct Team *_team, int _playerId, int *card, int _idx)
+void PlayerSeeCard(struct Team *_team, size_t _playerId, int *card, size_t _idx)
 {
-	int _cardIdx;
+	size_t _cardIdx;
 	_cardIdx = PolicyGetCard(_idx);
-	if(_cardIdx > LIMIT || _cardIdx < 0)
-	{
-		return;
-	}
 	card[0] = GetSuit(_team->m_players[_playerId]->m_cards[_cardIdx]);
 	card[1] = GetRank(_team->m_players[_playerId]->m_cards[_cardIdx]);
 }
 
-void GiveCardsToPlayer(struct Team *_team, int _playerId, int rank, int suit)
+void GiveCardsToPlayer(struct Team *_team, size_t _playerId, Rank rank, Suit suit)
 {
-	int nCardsInHand;
+	size_t nCardsInHand;
 	nCardsInHand = _team->m_players[_playerId]->m_nCardsInHand;
 	_team->m_players[_playerId]->m_cards[nCardsInHand] = CreateCard(suit, rank);
 	_team->m_players[_playerId]->m_nCardsInHand++;
 }
 
-void FindPlayer(struct Team *_team, int _rank, int _suit, int *playerID)
+void FindPlayer(struct Team *_team, Rank _rank, Suit _suit, size_t *playerID)
 {
-	int totalNPlayers, card;
-	int suit, rank, player;
+	size_t totalNPlayers, card, player;
+	Rank rank;
+	Suit suit;
 	totalNPlayers = _team->m_totalPlayers;
 	
 	for(player=0; player<totalNPlayers; player++)
@@ -233,7 +224,7 @@ void FindPlayer(struct Team *_team, int _rank, int _suit, int *playerID)
 	}
 }
 
-void FindIdx(struct Team *_team, int _rank, int _suit, int *idx, int _player)
+void FindIdx(struct Team *_team, Rank _rank, Suit _suit, size_t *idx, size_t _player)
 {
 	int totalNPlayers, card;
 	int suit, rank, player;
@@ -251,9 +242,11 @@ void FindIdx(struct Team *_team, int _rank, int _suit, int *idx, int _player)
 	*idx = 0;
 }
 
-int  CountSuit(struct Player *_player ,int _suit)
+size_t CountSuit(struct Player *_player ,Suit _suit)
 {
-	int card, suit, cnt;
+	Suit suit;
+	size_t cnt;
+	size_t card;
 	cnt = 0;
 	for(card=0; card<_player->m_nCardsInHand; card++)
 	{
@@ -266,9 +259,10 @@ int  CountSuit(struct Player *_player ,int _suit)
 	return cnt;
 }
 
-int AvailabilityOfSuit(struct Player *_player, int _leadSuit)
+int AvailabilityOfSuit(struct Player *_player, Suit _leadSuit)
 {
-	int card, suit;
+	Suit suit;
+	size_t card;
 	for(card=0; card<_player->m_nCardsInHand; card++)
 	{
 		suit = GetSuit(_player->m_cards[card]);
@@ -280,7 +274,7 @@ int AvailabilityOfSuit(struct Player *_player, int _leadSuit)
 	return SUIT_NOT_FOUND;
 }
 
-int CheckSuitInHand(struct Team *_team, int _playerID, int _leadSuit, int *result)
+int CheckSuitInHand(struct Team *_team, size_t _playerID, Suit _leadSuit, int *result)
 {
 	if(AvailabilityOfSuit(_team->m_players[_playerID], _leadSuit) == SUIT_NOT_FOUND)
 	{
@@ -289,10 +283,11 @@ int CheckSuitInHand(struct Team *_team, int _playerID, int _leadSuit, int *resul
 	return SUIT_AVAILABLE;
 }
 
-void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _leadRank, int *idx, int status)
+void FindBestCardIdx(struct Team *_team, size_t _playerID, Suit _leadSuit, Rank _leadRank, size_t *idx, int status)
 {
-	int size, tmp=0, card;
-	int suit, rank;
+	Suit suit;
+	Rank rank;
+	int card;
 	int flg=0;
 
 	if(AvailabilityOfSuit(_team->m_players[_playerID],_leadSuit) == SUIT_NOT_FOUND)
@@ -306,7 +301,10 @@ void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _lead
 		else
 		{
 			/* put high rank cards - risky policy */
-			*idx = _team->m_players[_playerID]->m_nCardsInHand-1;
+			if(_team->m_players[_playerID]->m_nCardsInHand-1 >= 0)
+			{
+				*idx = _team->m_players[_playerID]->m_nCardsInHand-1;
+			}
 		}
 		return;
 	}
@@ -340,11 +338,11 @@ void FindBestCardIdx(struct Team *_team, int _playerID, int _leadSuit, int _lead
 	}
 }
 
-struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card **_cards)
+struct Team * CreatePlayers(size_t _nBots, size_t _nHumans, size_t _nCards, struct Card **_cards)
 {
 	struct Player **newPlayers;
 	struct Team *newTeam;
-	int sizeOfPlayers;
+
 	newTeam = (struct Team*)calloc(1, sizeof(struct Team));
 	if(newTeam == NULL)
 	{
@@ -364,7 +362,7 @@ struct Team * CreatePlayers(int _nBots, int _nHumans, int _nCards, struct Card *
 
 void DestroyTeam(struct Team *_team)
 {
-	int p;
+	size_t p;
 	if(_team == NULL || _team->m_magic != TEAM_MAGIC_NUM)
 	{
 		return;
@@ -381,7 +379,7 @@ void DestroyTeam(struct Team *_team)
 
 void PrintCards(struct Team *_team)
 {
-	int card, player;
+	size_t card, player;
 	for(player=0; player<4; player++)
 	{
 		PrintIdUI(_team->m_players[player]->m_id);
@@ -394,9 +392,9 @@ void PrintCards(struct Team *_team)
 	}
 }
 
-void PrintCardsHand(struct Team *_team, int _playerId)
+void PrintCardsHand(struct Team *_team, size_t _playerId)
 {
-	int card;
+	size_t card;
 	PrintIdUI(_playerId);
 	for(card=0; card<(_team->m_players[_playerId]->m_nCardsInHand); card++)
 	{

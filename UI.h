@@ -21,6 +21,6 @@ void PrintScores(int *_scores, int _nPlayers);
 void PrintTableCard(int _player, int _rank, int _suit);
 
 /*user input - scanf */ 
-void UserInput(int *_in);
+void UserInput(size_t *_in);
 
 # endif /* __UI_H__ */

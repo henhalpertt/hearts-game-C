@@ -1,6 +1,6 @@
 #ifndef __GAME_H__
 #define __GAME_H__
-#include "SpecialChars.h"
+#include "CardSpecs.h"
 
 struct Game;
 
@@ -22,7 +22,7 @@ struct Game;
 		- returns NULL if malloc for players pointer failed.
 		- retunrs NULL if _nHumans + _nBots smaller than or equals zero.
 */
-struct Game * CreateGame(int _nBots, int _nHumans);
+struct Game * CreateGame(size_t _nBots, size_t _nHumans);
 
 /*
 	desc: Get Deck struct. each Deck holds n amount of cards that are already shuffled.
@@ -31,7 +31,7 @@ struct Game * CreateGame(int _nBots, int _nHumans);
 	output: pointer to Deck struct.
 	error handling:
 */
-struct Deck * GetDeckForHearts(int _nCards);
+/*struct Deck * GetDeckForHearts(int _nCards);*/
 
 /*
 	desc: Calling SortCards function in a different module. Please refer to player.h;
@@ -52,42 +52,42 @@ void SortHandsByRank(struct Game *_game);
 	output:
 	error handling:
 */
-void GetCardFromPlayer(struct Game *_game, int _playerId, int *card, int(*PolicyGetCard)(int), int _cardIdx);
+void GetCardFromPlayer(struct Game *_game, size_t _playerId, int *card, size_t(*PolicyGetCard)(size_t), size_t _cardIdx);
 
 /*
 	desc: Calling CheckSuitInHand function in a different module. Please refer to player.h;
 	output: returns SUIT_NOT_FOUND or SUIT_AVAILABLE
 	error handling:
 */
-int CheckSuitGame(struct Game *_game, int _playerID, int _leadSuit);
+int CheckSuitGame(struct Game *_game, size_t _playerID, Suit _leadSuit);
 
 /*
 	desc: Calling PlayerSeeCard function in a different module. Please refer to player.h;
 	output:
 	error handling:
 */
-void SeeCardGame(struct Game *_game, int _playerId, int *card, int _idx);
+void SeeCardGame(struct Game *_game, size_t _playerId, int *card, size_t _idx);
 
 /*
 	desc: Calling GiveCardsToPlayer function in a different module. Please refer to player.h;
 	output:
 	error handling:
 */
-void GiveCardsToGame(struct Game *_game, int _playerId, int rank, int suit);
+void GiveCardsToGame(struct Game *_game, size_t _playerId, Rank rank, Suit suit);
 
 /*
 	desc: Calling FindPlayer function in a different module. Please refer to player.h;
 	output:
 	error handling:
 */
-void FindPlayerGame(struct Game *_game, int _rank, int _suit, int *playerID);
+void FindPlayerGame(struct Game *_game, Rank _rank, Suit _suit, size_t *playerID);
 
 /*
 	desc: Calling FindIdx function in a different module. Please refer to player.h;
 	output:
 	error handling:
 */
-void FindIdxGame(struct Game *_game, int _rank, int _suit, int *idx, int _player);
+void FindIdxGame(struct Game *_game, Rank _rank, Suit _suit, size_t *idx, size_t _player);
 
 /*
 	desc: Calling FindBestCardIdx function in a different module. Please refer to player.h;
@@ -96,7 +96,7 @@ void FindIdxGame(struct Game *_game, int _rank, int _suit, int *idx, int _player
 	output:
 	error handling:
 */
-void FindBestCardGame(struct Game *_game, int _playerID, int _leadSuit, int _leadRank, int *idx, int _status);
+void FindBestCardGame(struct Game *_game, size_t _playerID, Suit _leadSuit, Rank _leadRank, size_t *idx, int _status);
 
 /*
 	desc: Update the score after each round.
@@ -135,7 +135,7 @@ void DestroyGame(struct Game *_game);
 void PrintGameCards(struct Game *_game);
 
 /* Calling PrintCardsHand function in a different module. Please refer to player.h; */
-void PrintHand(struct Game *_game, int _playerId);
+void PrintHand(struct Game *_game, size_t _playerId);
 
 # endif /* __GAME_H__ */
 

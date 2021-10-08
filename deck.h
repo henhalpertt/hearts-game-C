@@ -1,6 +1,6 @@
 #ifndef __CARDS_H__
 #define __CARDS_H__
-#include "CardSpecs.h"
+/*#include "CardSpecs.h"*/
 /*#include "card.h"*/
 
 struct Deck;
